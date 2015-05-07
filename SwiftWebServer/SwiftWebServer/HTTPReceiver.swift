@@ -2,7 +2,7 @@
 //  HTTPReceiver.swift
 //  SwiftWebServer
 //
-//  Created by OOPer in cooperation with shlab.jp, on 2015/4/26.
+//  Created by 開発 on 2015/4/26.
 //  Copyright (c) 2015 OOPer (NAGATA, Atsuyuki). All rights reserved.
 //
 

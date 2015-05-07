@@ -2,8 +2,8 @@
 //  Options.swift
 //  SwiftWebServer
 //
-//  Created by 開発 on 2014/10/12.
-//  Copyright (c) 2014年 nagata_kobo. All rights reserved.
+//  Created by OOPer in cooperation with shlab.jp, on 2014/10/12.
+//  Copyright (c) 2014-2015 OOPer (NAGATA, Atsuyuki). All rights reserved.
 //
 
 import Foundation
@@ -18,6 +18,25 @@ func ~=(ch: UnicodeScalar, val: Int32) -> Bool {
     return UInt32(ch) == UInt32(val)
 }
 
+/// Read command line options & config files, and keep settings as properties
+/// Valid options
+///
+/// -b
+/// --static-base
+///     base directory path for static documents
+/// -p
+/// --port
+///     port number
+/// -t
+/// --types
+///     mime/types, separated by comma, paired with colon
+/// -d
+/// --defaults
+///     default index file, separated by comma
+/// -c
+/// --config
+///     specify configuration file
+///
 class Options {
     private(set) var port: UInt16 = 8080
     private(set) var backlogs: Int32 = 16
@@ -26,6 +45,8 @@ class Options {
         "html": "text/html",
         "htm": "text/html",
         "txt": "text/plain",
+        "js": "text/javascript",
+        "css": "text/css",
         "png": "image/png",
         "jpg": "image/jpg",
         "jpeg": "image/jpg",
@@ -40,74 +61,43 @@ class Options {
     private(set) static var instance = Options()
     
     private init() {
-        var c: Int32 = 0
-        var digit_optind: Int32 = 0
-
-        OUTER_LOOP: while true {
-            var this_option_optind = optind != 0 ? optind : 1
-            var option_index: Int32 = 0
-            let long_options: [option] = [
-                option(name: "add", has_arg: required_argument, flag: nil, val: 0),
-                option(name: "append", has_arg: required_argument, flag: nil, val: 0),
-                option(name: "delete", has_arg: required_argument, flag: nil, val: 0),
-                option(name: "verbose", has_arg: no_argument, flag: nil, val: 0),
-                option(name: "create", has_arg: required_argument, flag: nil, val: "c"),
-                option(name: "file", has_arg: required_argument, flag: nil, val: 0),
-                option(name: nil, has_arg: 0, flag: nil, val: 0),
-            ]
-
-            c = getopt_long(Process.argc, Process.unsafeArgv, "abc:d:012", long_options, &option_index)
-
-            switch c {
-            case -1:
-                break OUTER_LOOP
-            case 0:
-                var name = String.fromCString(long_options[Int(option_index)].name)
-                print("option \(name)")
-                if optarg != nil {
-                    var optarg_name = String.fromCString(optarg)
-                    print(" with arg \(optarg_name)")
+        let shortopts = "b:p:t:d:c:"
+        let longopts: [GetoptLong.OptionsType] = [
+            ("static-base", true, false, "b"),
+            ("port", true, false, "p"),
+            ("types", true, false, "t"),
+            ("defaults", true, false, "d"),
+            ("config", true, false, "c"),
+        ]
+        let getopt = GetoptLong(shortopts: shortopts, longopts: longopts)
+        if let config = getopt.option("c") {
+            //TODO: load config file
+        }
+        //All command line options overrides the settings in the config file
+        if let staticBase = getopt.option("b") {
+            self.staticBase = staticBase
+        }
+        if let portStr = getopt.option("p"), port = portStr.toInt()
+            where port >= 0 && port < Int(UInt16.max) {
+                self.port = UInt16(port)
+        }
+        if let types = getopt.option("types") {
+            self.types = types.componentsSeparatedByString(",").reduce([:]) {dict, pair in
+                var result = dict
+                if let sep = pair.rangeOfString(":", options: nil) {
+                    let key = pair.substringToIndex(sep.startIndex)
+                        .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+                    let value = pair.substringFromIndex(sep.endIndex)
+                        .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+                    result[key] = value
                 }
-                println()
-
-            case "0", "1", "2":
-                if digit_optind != 0 && digit_optind != this_option_optind {
-                    println("digits occur in two different argv-elements.")
-                }
-                digit_optind = this_option_optind
-                println("option \(UnicodeScalar(UInt32(c)))")
-
-            case "a":
-                println("option a")
-
-            case "b":
-                println("option b")
-
-            case "c":
-                var optarg_name = String.fromCString(optarg)
-                println("option c with value '\(optarg_name)'")
-
-            case "d":
-                var optarg_name = String.fromCString(optarg)
-                println("option d with value '\(optarg_name)'")
-
-            case "?":
-                break
-
-            default:
-                var c_oct = String(c, radix: 8)
-                println("?? getopt returned character code 0\(c_oct) ??")
+                return result
             }
         }
-
-        if optind < Process.argc {
-            print("non-option ARGV-elements: ")
-            while optind < Process.argc {
-                let argv_name = String.fromCString(Process.unsafeArgv[Int(optind++)])
-                print("\(argv_name) ")
+        if let defaults = getopt.option("d") {
+            self.defaults = defaults.componentsSeparatedByString(",").map{
+                $0.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
             }
-            println()
         }
-
     }
 }

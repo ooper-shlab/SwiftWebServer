@@ -3,12 +3,12 @@
 //  SwiftWebServer
 //
 //  Created by 開発 on 2015/5/5.
-//  Copyright (c) 2015年 nagata_kobo. All rights reserved.
+//  Copyright (c) 2015 OOPer (NAGATA, Atsuyuki). All rights reserved.
 //
 
 import Foundation
 
-enum JSON {
+public enum JSON {
     case STRING(String)
     case NUMBER(Double)
     case BOOL(Bool)
@@ -16,8 +16,10 @@ enum JSON {
     case ARRAY([JSON])
     case NULL
 }
+//MARK: -
+//MARK: type checks
 extension JSON {
-    var isString: Bool {
+    public var isString: Bool {
         switch self {
         case STRING:
             return true
@@ -25,7 +27,7 @@ extension JSON {
             return false
         }
     }
-    var isNumber: Bool {
+    public var isNumber: Bool {
         switch self {
         case NUMBER:
             return true
@@ -33,7 +35,7 @@ extension JSON {
             return false
         }
     }
-    var isBool: Bool {
+    public var isBool: Bool {
         switch self {
         case BOOL:
             return true
@@ -41,7 +43,7 @@ extension JSON {
             return false
         }
     }
-    var isObject: Bool {
+    public var isObject: Bool {
         switch self {
         case OBJECT(let val):
             return true
@@ -49,7 +51,7 @@ extension JSON {
             return false
         }
     }
-    var isArray: Bool {
+    public var isArray: Bool {
         switch self {
         case ARRAY:
             return true
@@ -57,7 +59,7 @@ extension JSON {
             return false
         }
     }
-    var isNull: Bool {
+    public var isNull: Bool {
         switch self {
         case NULL:
             return true
@@ -66,8 +68,10 @@ extension JSON {
         }
     }
 }
+//MARK: -
+//MARK: type conversions
 extension JSON {
-    var asString: String? {
+    public var asString: String? {
         switch self {
         case STRING(let val):
             return val
@@ -75,7 +79,7 @@ extension JSON {
             return nil
         }
     }
-    var asNumber: Double? {
+    public var asNumber: Double? {
         switch self {
         case NUMBER(let val):
             return val
@@ -83,7 +87,7 @@ extension JSON {
             return nil
         }
     }
-    var asBool: Bool? {
+    public var asBool: Bool? {
         switch self {
         case BOOL(let val):
             return val
@@ -91,7 +95,7 @@ extension JSON {
             return nil
         }
     }
-    var asObject: [String: JSON]? {
+    public var asObject: [String: JSON]? {
         switch self {
         case OBJECT(let val):
             return val
@@ -99,7 +103,7 @@ extension JSON {
             return nil
         }
     }
-    var asArray: [JSON]? {
+    public var asArray: [JSON]? {
         switch self {
         case ARRAY(let val):
             return val
@@ -108,9 +112,11 @@ extension JSON {
         }
     }
 }
+//MARK: -
+//MARK: iterating
 ///Empty generator
-class JSONGenerator: GeneratorType {
-    func next() -> (String, JSON)? {
+public class JSONGenerator: GeneratorType {
+    public func next() -> (String, JSON)? {
         return nil
     }
 }
@@ -139,57 +145,50 @@ class JSONObjectGenerator: JSONGenerator {
     }
 }
 extension JSON: SequenceType {
-    subscript(index: Int) -> JSON? {
+    public subscript(index: Int) -> JSON {
         get {
             switch self {
             case ARRAY(let val):
-                if 0..<val.count ~= index {
+                assert(0..<val.count ~= index, "index out of range")
                     return val[index]
-                } else {
-                    return nil
-                }
             default:
-                return nil
+                fatalError("value is not a JSON.ARRAY")
             }
         }
-        ///mutating methods are not effective!!!
+        //mutating methods are not effective!!!
         mutating set {
             switch self {
             case ARRAY(var val):
-                if 0..<val.count ~= index {
-                    assert(newValue != nil, "cannot assign Swift nil, use JSON.NULL instead")
-                    val[index] = newValue!
-                    self = .ARRAY(val)
-                } else {
-                    fatalError("index out of range")
-                }
+                assert(0..<val.count ~= index, "index out of range")
+                val[index] = newValue
+                self = .ARRAY(val)
             default:
                 fatalError("value is not a JSON.ARRAY")
             }
         }
     }
-    subscript(key: String) -> JSON? {
+    public subscript(key: String) -> JSON? {
         get {
             switch self {
             case OBJECT(let val):
                 return val[key]
             default:
-                return nil
+                fatalError("value is not a JSON.OBJECT")
             }
         }
-        ///mutating methods are not effective!!!
+        //mutating methods are not effective!!!
         mutating set {
             switch self {
             case OBJECT(var val):
-                assert(newValue != nil, "cannot assign Swift nil, use JSON.NULL instead")
+                assert(newValue != Optional<JSON>.None)
                 val[key] = newValue!
                 self = .OBJECT(val)
             default:
-                fatalError("value is not a OBJECT")
+                fatalError("value is not a JSON.OBJECT")
             }
         }
     }
-    func generate() -> JSONGenerator {
+    public func generate() -> JSONGenerator {
         switch self {
         case STRING, NUMBER, BOOL:
             fatalError("Cannot iterate on STRING/NUMBER/BOOL")
@@ -202,55 +201,58 @@ extension JSON: SequenceType {
         }
     }
 }
+//MARK: -
+//MARK: literals
 extension JSON: IntegerLiteralConvertible {
-    init(integerLiteral value: IntegerLiteralType) {
+    public init(integerLiteral value: IntegerLiteralType) {
         self = .NUMBER(Double(value))
     }
 }
 extension JSON: FloatLiteralConvertible {
-    init(floatLiteral value: FloatLiteralType) {
+    public init(floatLiteral value: FloatLiteralType) {
         self = .NUMBER(value)
     }
 }
 extension JSON: StringLiteralConvertible {
-    init(extendedGraphemeClusterLiteral value: StringLiteralType) {
+    public init(extendedGraphemeClusterLiteral value: StringLiteralType) {
         self = .STRING(value)
     }
-    init(stringLiteral value: StringLiteralType) {
+    public init(stringLiteral value: StringLiteralType) {
         self = .STRING(value)
     }
-    init(unicodeScalarLiteral value: StringLiteralType) {
+    public init(unicodeScalarLiteral value: StringLiteralType) {
         self = .STRING(value)
     }
 }
 extension JSON: StringInterpolationConvertible {
-    init(stringInterpolation strings: JSON...) {
+    public init(stringInterpolation strings: JSON...) {
         self = .STRING(reduce(lazy(strings).map {$0.description}, "", +))
     }
-    init<T>(stringInterpolationSegment expr: T) {
+    public init<T>(stringInterpolationSegment expr: T) {
         self = .STRING(toString(expr))
     }
 }
 extension JSON: BooleanLiteralConvertible {
-    init(booleanLiteral value: BooleanLiteralType) {
+    public init(booleanLiteral value: BooleanLiteralType) {
         self = .BOOL(value)
     }
 }
+//Remember, `nil` can be ambiguous when treating JSON?
 extension JSON: NilLiteralConvertible {
-    init(nilLiteral: ()) {
+    public init(nilLiteral: ()) {
         self = .NULL
     }
 }
 extension JSON: ArrayLiteralConvertible {
 //    typealias Element = JSON
-    init(arrayLiteral elements: JSON...) {
+    public init(arrayLiteral elements: JSON...) {
         self = .ARRAY(elements)
     }
 }
 extension JSON: DictionaryLiteralConvertible {
 //    typealias Key = String
 //    typealias Value = JSON
-    init(dictionaryLiteral elements: (String, JSON)...) {
+    public init(dictionaryLiteral elements: (String, JSON)...) {
         var dict: [String: JSON] = [:]
         for (key, value) in elements {
             dict[key] = value
@@ -258,9 +260,10 @@ extension JSON: DictionaryLiteralConvertible {
         self = .OBJECT(dict)
     }
 }
+//MARK: -
 //MARK: printing
 extension JSON: Printable, DebugPrintable {
-    var description: String {
+    public var description: String {
         switch self {
         case STRING(let val):
             return val
@@ -276,7 +279,7 @@ extension JSON: Printable, DebugPrintable {
             return ""
         }
     }
-    var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case STRING(let val):
             return "\"\(JSON.escape(val))\""
@@ -292,11 +295,11 @@ extension JSON: Printable, DebugPrintable {
             return "null"
         }
     }
+    //minimum JSON compliant
+    static let escapePattern = "[\"\\\\\\p{Cc}]"
+    static let escapeRegex = RegularExpression(pattern: escapePattern, options: nil, error: nil)!
     static func escape(val: String) -> String {
-        //minimum JSON compliant
-        let pattern = "[\"\\\\\\p{Cc}]"
-        let regex = RegularExpression(pattern: pattern, options: nil, error: nil)!
-        let result = regex.stringByReplacingMatchesInString(val) {match, _ in
+        let result = escapeRegex.stringByReplacingMatchesInString(val) {match, _ in
             var us = match.unicodeScalars[match.unicodeScalars.startIndex]
             switch us {
             case "\r":
@@ -327,17 +330,17 @@ extension JSON: Printable, DebugPrintable {
         return result
     }
 }
+//MARK: -
 //MARK: parsing
 extension JSON {
     
+    static let unescapeRegex = RegularExpression(pattern: JSON_ESCAPES, options: nil, error: nil)!
     static func unescape(var val: String) -> String {
         if val.hasPrefix("\"") && val.hasSuffix("\"") && count(val) >= 2 {
             val = val[val.startIndex.successor()..<val.endIndex.predecessor()]
         }
         //strict JSON
-        let pattern = JSON_ESCAPES
-        let regex = RegularExpression(pattern: pattern, options: nil, error: nil)!
-        let result = regex.stringByReplacingMatchesInString(val) {match, _ in
+        let result = unescapeRegex.stringByReplacingMatchesInString(val) {match, _ in
             switch match {
             case "\\r":
                 return "\r"
@@ -372,19 +375,35 @@ extension JSON {
     }
     
     //JSON parsing patterns
-    private static let JSON_ESCAPES = "\\\\(?:[\"\\\\/rntbf]|u[dD][89abAB][0-9a-fA-F]{2}\\\\u[dD][c-fC-F][0-9a-fA-F]{2}|u[0-9a-fA-F]{4})"
-    private static let SPACES = "\\s*"
-    private static let JSON_NUMBER = "-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][-+]?[0-9]+)?"
-    private static let JSON_STRING = "\"(?:"+JSON_ESCAPES+"|[^\\\\\"])*\""
-    private static let OPEN_BRACE = "\\{"
-    private static let CLOSE_BRACE = "\\}"
-    private static let OPEN_BRACKET = "\\["
-    private static let CLOSE_BRACKET = "\\]"
-    private static let JSON_LITERALS = JSON_STRING+"|"+JSON_NUMBER+"|true|false|null"
-    private static let FIRST_TOKEN = OPEN_BRACE+"|"+OPEN_BRACKET+"|"+JSON_LITERALS
-    private static let GLOBAL_FIRST_TOKEN = OPEN_BRACE+"|"+OPEN_BRACKET
+    static let JSON_ESCAPES = "\\\\(?:[\"\\\\/rntbf]|u[dD][89abAB][0-9a-fA-F]{2}\\\\u[dD][c-fC-F][0-9a-fA-F]{2}|u[0-9a-fA-F]{4})"
+    static let JSON_NUMBER = "-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][-+]?[0-9]+)?"
+    static let JSON_STRING = "\"(?:"+JSON_ESCAPES+"|[^\\\\\"])*\""
+    static let OPEN_BRACE = "\\{"
+    static let CLOSE_BRACE = "\\}"
+    static let OPEN_BRACKET = "\\["
+    static let CLOSE_BRACKET = "\\]"
+    static let JSON_LITERALS = JSON_STRING+"|"+JSON_NUMBER+"|true|false|null"
+    static let FIRST_TOKEN = OPEN_BRACE+"|"+OPEN_BRACKET+"|"+JSON_LITERALS
+    //
+    static let LINE_COMMENT = "//.*(?:\\r\\n|\\r|\\n)"
+    static let BLOCK_COMMENT = "/\\*(?:[^\\*]|\\*[^/])*\\*/"
     
-    static func parseData(data: NSData) -> JSON? {
+    //Identifier letters for JavaScript (ECMAScript v3+)
+    //Character sets/patterns
+    static let ZWNJ = "\\u200C"
+    static let ZWJ = "\\u200D"
+    //Character sets
+    static let UnicodeLetter = "\\p{Lu}\\p{Ll}\\p{Lt}\\p{Lm}\\p{Lo}\\p{Nl}"
+    static let UnicodeCombiningMark = "\\p{Mn}\\p{Mc}"
+    static let UnicodeDigit = "\\p{Nd}"
+    static let UnicodeConnectorPunctuation = "\\p{Pc}"
+    static let IdentifierStart = UnicodeLetter+"\\$_" //and \UnicodeEscapeSequence
+    static let IdentifierPart = IdentifierStart+UnicodeCombiningMark+UnicodeDigit+UnicodeConnectorPunctuation+ZWNJ+ZWJ
+    //Patterns
+    static let UNICODE_ESCAPE_SEQUENCE = "\\\\u[0-9a-fA-F]{4}"
+    static let IDENTIFIER_NAME = "(?:["+IdentifierStart+"]|"+UNICODE_ESCAPE_SEQUENCE+")(?:["+IdentifierPart+"]|"+UNICODE_ESCAPE_SEQUENCE+")*"
+    
+    public static func parseData(data: NSData) -> JSON? {
         let string = NSString(data: data, encoding: NSUTF8StringEncoding) as String?
         if string == nil {
             return nil
@@ -392,58 +411,136 @@ extension JSON {
             return JSON.parse(string!)
         }
     }
-    private static func isOpenBrace(token: String) -> Bool {
+    static func isOpenBrace(token: String) -> Bool {
         return token == "{"
     }
-    private static func isOpenBracket(token: String) -> Bool {
+    static func isOpenBracket(token: String) -> Bool {
         return token == "["
     }
-    private static func isCloseBrace(token: String) -> Bool {
+    static func isCloseBrace(token: String) -> Bool {
         return token == "}"
     }
-    private static func isCloseBracket(token: String) -> Bool {
+    static func isCloseBracket(token: String) -> Bool {
         return token == "]"
     }
-    private static func isStringToken(token: String) -> Bool {
+    static func isStringToken(token: String) -> Bool {
         return token.hasSuffix("\"")
     }
-    private static func isTrueToken(token: String) -> Bool {
+    static func isTrueToken(token: String) -> Bool {
         return token == "true"
     }
-    private static func isFalseToken(token: String) -> Bool {
+    static func isFalseToken(token: String) -> Bool {
         return token == "false"
     }
-    private static func isNullToken(token: String) -> Bool {
+    static func isNullToken(token: String) -> Bool {
         return token == "null"
     }
     
-    typealias JSONErrorHandler = NSError->Void
+    public typealias JSONErrorHandler = NSError->Void
     
-    private static let firstTokenPattern = "^"+SPACES+"("+FIRST_TOKEN+")"
-    private static let firstTokenRegex = RegularExpression(pattern: firstTokenPattern, options: nil, error: nil)!
-    static func parse(string: String, onError: JSONErrorHandler? = nil) -> JSON? {
+    static let preprocessedDafaultOptions: [String: AnyObject] = JSON.preprocessedOptions([:])
+    public static func parse(string: String, var options: [String: AnyObject] = [:], onError: JSONErrorHandler? = nil) -> JSON? {
+        if options.isEmpty {
+            options = preprocessedDafaultOptions
+        } else {
+            options = processParseOptions(options)
+        }
+        let firstTokenRegex = options["firstTokenRegex"] as! NSRegularExpression
         var range = NSRange(0..<count(string.utf16))
         if let firstMatch = firstTokenRegex.firstMatchInString(string, options: nil, range: range) {
             let firstToken = (string as NSString).substringWithRange(firstMatch.rangeAtIndex(1))
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
-            return parseValue(firstToken, string, &range, onError)
+            return parseValue(firstToken, string, &range, options, onError)
         } else {
-            if let errorHandler = onError {
-                let userInfo: [NSObject: AnyObject] = [:]
-                let error = NSError(domain: "JSON", code: 0, userInfo: userInfo)
-                errorHandler(error)
-            }
+            onError?(JSONParseError("invalid JSON", string, range))
             return nil
         }
     }
     
+    static let preprocessedSettingsOptions: [String: AnyObject] = JSON.preprocessedOptions([
+        "comments": true,
+        "omittableComma": true,
+        "unquotedKey": true,
+        "eofTerminates": true,
+    ])
+    public static func parseSettings(string: String, onError: JSONErrorHandler? = nil) -> JSON? {
+        var range = NSRange(0..<count(string.utf16))
+        return parseObject(string, &range, preprocessedSettingsOptions, onError)
+    }
+    
+    public static func preprocessedOptions(options: [String: AnyObject]) -> [String: AnyObject] {
+        var result = processParseOptions(options)
+        result["preprocessed"] = true
+        return result
+    }
+    
+    /// valid options: type(default value)
+    /// "preprocessed": Bool(false)
+    /// "comments": Bool(false)
+    /// "acceptsScalar": Bool(false)
+    /// "omittableComma": Bool(false)
+    /// "unquotedKey": Bool(false)
+    /// "eofTerminates": Bool(false)
+    /// "trailingComma": Bool(false)
+    /// "duplicateKey": Bool(true)
+    /// "firstTokenRegex": NSRegularExpression
+    /// "firstValueRegex": NSRegularExpression
+    /// "nextValueRegex": NSRegularExpression
+    /// "firstPairRegex": NSRegularExpression
+    /// "nextPairRegex": NSRegularExpression
+    static func processParseOptions(options: [String: AnyObject]) -> [String: AnyObject] {
+        if options["preprocessed"] as? Bool ?? false {
+            if options["firstTokenRegex"] is NSRegularExpression
+            && options["firstValueRegex"] is NSRegularExpression
+            && options["nextValueRegex"] is NSRegularExpression
+            && options["firstPairRegex"] is NSRegularExpression
+            && options["nextPairRegex"] is NSRegularExpression
+            {
+                return options
+            }
+        }
+        //Retrieve option
+        let comments = options["comments"] as? Bool ?? false
+        let SPACES = comments ? "(?:\\s|"+LINE_COMMENT+"|"+BLOCK_COMMENT+")*" : "\\s*"
+        
+        let acceptsScalar = options["acceptsScalar"] as? Bool ?? false
+        let GLOBAL_FIRST_TOKEN = acceptsScalar ? FIRST_TOKEN : OPEN_BRACE+"|"+OPEN_BRACKET
+        
+        let omittableComma = options["omittableComma"] as? Bool ?? false
+        let COMMA = omittableComma ? "(?:,"+SPACES+")?" : ","+SPACES
+        
+        let unquotedKey = options["unquotedKey"] as? Bool ?? false
+        let KEY = unquotedKey ? "(?:"+JSON_STRING+"|"+IDENTIFIER_NAME+")" : JSON_STRING
+        
+        let eofTerminates = options["eofTerminates"] as? Bool ?? false
+        let CLOSE_ARRAY = eofTerminates ? CLOSE_BRACKET+"|\\z" : CLOSE_BRACKET
+        let CLOSE_OBJECT = eofTerminates ? CLOSE_BRACE+"|\\z" : CLOSE_BRACE
+        
+        let trailingComma = options["trailingComma"] as? Bool ?? false
+        let TRAILING_COMMA = trailingComma ? "(?:,"+SPACES+")?" : ""
+        
+        //Generate RegularExpression objects
+        let firstTokenPattern = "\\A"+SPACES+"("+GLOBAL_FIRST_TOKEN+")"
+        let firstValuePattern = "\\A"+SPACES+"(?:"+TRAILING_COMMA+"("+CLOSE_ARRAY+")|("+FIRST_TOKEN+"))"
+        let nextValuePattern = "\\A"+SPACES+"(?:"+TRAILING_COMMA+"("+CLOSE_ARRAY+")|"+COMMA+"("+FIRST_TOKEN+"))"
+        let firstPairPattern = "\\A"+SPACES+"(?:"+TRAILING_COMMA+"("+CLOSE_OBJECT+")|("+KEY+")"+SPACES+":"+SPACES+"("+FIRST_TOKEN+"))"
+        let nextPairPattern = "\\A"+SPACES+"(?:"+TRAILING_COMMA+"("+CLOSE_OBJECT+")|"+COMMA+"("+KEY+")"+SPACES+":"+SPACES+"("+FIRST_TOKEN+"))"
+        var result = options
+        result["firstTokenRegex"] = RegularExpression(pattern: firstTokenPattern, options: nil, error: nil)!
+        result["firstValueRegex"] = RegularExpression(pattern: firstValuePattern, options: nil, error: nil)!
+        result["nextValueRegex"] = RegularExpression(pattern: nextValuePattern, options: nil, error: nil)!
+        result["firstPairRegex"] = RegularExpression(pattern: firstPairPattern, options: nil, error: nil)!
+        result["nextPairRegex"] = RegularExpression(pattern: nextPairPattern, options: nil, error: nil)!
+        return result
+    }
+    
     //range.location points to the next character of the firstToken.
-    private static func parseValue(firstToken: String, _ string: String, inout _ range: NSRange, _ onError: JSONErrorHandler?) -> JSON? {
+    static func parseValue(firstToken: String, _ string: String, inout _ range: NSRange, _ options: [String: AnyObject], _ onError: JSONErrorHandler?) -> JSON? {
         if isOpenBrace(firstToken) {
-            return parseObject(string, &range, onError)
+            return parseObject(string, &range, options, onError)
         } else if isOpenBracket(firstToken) {
-            return parseArray(string, &range, onError)
+            return parseArray(string, &range, options, onError)
         } else if isStringToken(firstToken) {
             return STRING(unescape(firstToken))
         } else if isTrueToken(firstToken) {
@@ -458,12 +555,10 @@ extension JSON {
         }
     }
     
-    private static let firstValuePattern = "^"+SPACES+"(?:("+CLOSE_BRACKET+")|("+FIRST_TOKEN+"))"
-    private static let firstValueRegex = RegularExpression(pattern: firstValuePattern, options: nil, error: nil)!
-    private static let nextValuePattern = "^"+SPACES+"(?:("+CLOSE_BRACKET+")|,"+SPACES+"("+FIRST_TOKEN+"))"
-    private static let nextValueRegex = RegularExpression(pattern: nextValuePattern, options: nil, error: nil)!
-    private static func parseArray(string: String, inout _ range: NSRange, _ onError: JSONErrorHandler?) -> JSON? {
+    static func parseArray(string: String, inout _ range: NSRange, _ options: [String: AnyObject], _ onError: JSONErrorHandler?) -> JSON? {
         var values: [JSON] = []
+        let firstValueRegex = options["firstValueRegex"] as! NSRegularExpression
+        let nextValueRegex = options["nextValueRegex"] as! NSRegularExpression
         if let firstMatch = firstValueRegex.firstMatchInString(string, options: nil, range: range) {
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
@@ -472,9 +567,10 @@ extension JSON {
                 return ARRAY(values)
             }
             let firstToken = (string as NSString).substringWithRange(firstMatch.rangeAtIndex(2))
-            if let value = parseValue(firstToken, string, &range, onError) {
+            if let value = parseValue(firstToken, string, &range, options, onError) {
                 values.append(value)
             } else {
+                onError?(JSONParseError("invalid array", string, range))
                 return nil
             }
         }
@@ -486,26 +582,21 @@ extension JSON {
                 return ARRAY(values)
             }
             let nextToken = (string as NSString).substringWithRange(nextMatch.rangeAtIndex(2))
-            if let value = parseValue(nextToken, string, &range, onError) {
+            if let value = parseValue(nextToken, string, &range, options, onError) {
                 values.append(value)
             } else {
-                return nil
+                break
             }
         }
-        if let errorHandler = onError {
-            let userInfo: [NSObject: AnyObject] = [:]
-            let error = NSError(domain: "JSON", code: 0, userInfo: userInfo)
-            errorHandler(error)
-        }
+        onError?(JSONParseError("invalid array", string, range))
         return nil
     }
     
-    private static let firstPairPattern = "^"+SPACES+"(?:("+CLOSE_BRACE+")|("+JSON_STRING+")"+SPACES+":"+SPACES+"("+FIRST_TOKEN+"))"
-    private static let firstPairRegex = RegularExpression(pattern: firstPairPattern, options: nil, error: nil)!
-    private static let nextPairPattern = "^"+SPACES+"(?:("+CLOSE_BRACE+")|,"+SPACES+"("+JSON_STRING+")"+SPACES+":"+SPACES+"("+FIRST_TOKEN+"))"
-    private static let nextPairRegex = RegularExpression(pattern: nextPairPattern, options: nil, error: nil)!
-    private static func parseObject(string: String, inout _ range: NSRange, _ onError: JSONErrorHandler?) -> JSON? {
+    static func parseObject(string: String, inout _ range: NSRange, _ options: [String: AnyObject], _ onError: JSONErrorHandler?) -> JSON? {
         var dict: [String: JSON] = [:]
+        let firstPairRegex = options["firstPairRegex"] as! NSRegularExpression
+        let nextPairRegex = options["nextPairRegex"] as! NSRegularExpression
+        let duplicateKey = options["duplicateKey"] as? Bool ?? true //defaults true
         if let firstMatch = firstPairRegex.firstMatchInString(string, options: nil, range: range) {
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
@@ -515,13 +606,10 @@ extension JSON {
             }
             let key = unescape((string as NSString).substringWithRange(firstMatch.rangeAtIndex(2)))
             let firstToken = (string as NSString).substringWithRange(firstMatch.rangeAtIndex(3))
-            if let value = parseValue(firstToken, string, &range, onError) {
-                if dict[key] != nil {
-                    //error
-                    return nil
-                }
+            if let value = parseValue(firstToken, string, &range, options, onError) {
                 dict[key] = value
             } else {
+                onError?(JSONParseError("invalid object", string, range))
                 return nil
             }
         }
@@ -534,26 +622,31 @@ extension JSON {
             }
             let key = unescape((string as NSString).substringWithRange(nextMatch.rangeAtIndex(2)))
             let nextToken = (string as NSString).substringWithRange(nextMatch.rangeAtIndex(3))
-            if let value = parseValue(nextToken, string, &range, onError) {
-                if dict[key] != nil {
+            if let value = parseValue(nextToken, string, &range, options, onError) {
+                if dict[key] != nil && !duplicateKey {
                     //error
-                    return nil
+                    break
                 }
                 dict[key] = value
             } else {
-                return nil
+                break
             }
         }
-        if let errorHandler = onError {
-            let userInfo: [NSObject: AnyObject] = [:]
-            let error = NSError(domain: "JSON", code: 0, userInfo: userInfo)
-            errorHandler(error)
-        }
+        onError?(JSONParseError("invalid object", string, range))
         return nil
     }
+    
+    static func JSONParseError(message: String, _ string: String, _ range: NSRange) -> NSError {
+        let userInfo: [NSObject: AnyObject] = [
+            "message": message
+        ]
+        return NSError(domain: "JSON.parse", code: 0, userInfo: userInfo)
+    }
 }
+//MARK: -
+//MARK: Equatable
 extension JSON: Equatable {}
-func ==(lhs: JSON, rhs: JSON) -> Bool {
+public func ==(lhs: JSON, rhs: JSON) -> Bool {
     switch (lhs, rhs) {
     case (.ARRAY(let lval), .ARRAY(let rval)):
         return lval == rval

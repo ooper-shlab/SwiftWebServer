@@ -2,8 +2,8 @@
 //  Internet.swift
 //  SwiftWebServer
 //
-//  Created by OOPer in cooperation with shlab.jp, on 2014/10/13.
-//  Copyright (c) 2014-2015 OOPer (NAGATA, Atsuyuki). All rights reserved.
+//  Created by 開発 on 2014/10/13.
+//  Copyright (c) 2015 OOPer (NAGATA, Atsuyuki). All rights reserved.
 //
 
 import Foundation

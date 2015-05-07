@@ -1,9 +1,9 @@
 //
 //  OOPRegularExpression.swift
-//  SwiftWebServer
+//  OOPUtils
 //
-//  Created by 開発 on 2015/5/5.
-//  Copyright (c) 2015年 nagata_kobo. All rights reserved.
+//  Created by OOPer in cooperation with shlab.jp, on 2015/5/5.
+//  Copyright (c) 2015 OOPer (NAGATA, Atsuyuki). All rights reserved.
 //
 
 import Foundation
@@ -47,5 +47,13 @@ class RegularExpression: NSRegularExpression {
     func stringByReplacingMatchesInString(string: String, options: NSMatchingOptions = nil, withSimpleBlock block: SimpleReplacementBlock) -> String {
         let range = NSRange(0..<count(string.utf16))
         return self.stringByReplacingMatchesInString(string, options: options, range: range, withSimpleBlock: block)
+    }
+    
+    func matches(string: String, options: NSMatchingOptions = nil) -> Bool {
+        return matches(string, options: options, range: NSRange(0..<count(string.utf16)))
+    }
+    
+    func matches(string: String, options: NSMatchingOptions = nil, range: NSRange) -> Bool {
+        return numberOfMatchesInString(string, options: options, range: range) > 0
     }
 }
