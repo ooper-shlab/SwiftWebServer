@@ -27,7 +27,7 @@ class HTTPResponse {
     
     var contentLength: Int? {
         get {
-            return headers["Content-Length"]?.toInt()
+            return headers["Content-Length"].flatMap{Int($0)}
         }
         set {
             if newValue == nil {

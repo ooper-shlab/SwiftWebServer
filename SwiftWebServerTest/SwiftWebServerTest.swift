@@ -26,7 +26,7 @@ class SwiftWebServerTest: XCTestCase {
         let jsonString = "{ \"a\": 10.5, \"b\": [true, false, null], \"c\": \"\\r\\n\"}"
         var hasError = false
         let json = JSON.parse(jsonString) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = ["b": [true, false, nil], "a": 10.5, "c": "\r\n"]
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }
@@ -38,7 +38,7 @@ class SwiftWebServerTest: XCTestCase {
             "omittableComma": true
         ]
         let json = JSON.parse(jsonString, options: options) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = ["b": [true, false, nil], "a": 10.5, "c": "\r\n"]
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }
@@ -50,7 +50,7 @@ class SwiftWebServerTest: XCTestCase {
             "unquotedKey": true
         ]
         let json = JSON.parse(jsonString, options: options) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = ["b": [true, false, nil], "a": 10.5, "c": "\r\n"]
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }
@@ -69,7 +69,7 @@ class SwiftWebServerTest: XCTestCase {
             "acceptsScalar": true
         ]
         let json = JSON.parse(jsonString, options: options) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = 10.5
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }
@@ -88,7 +88,7 @@ class SwiftWebServerTest: XCTestCase {
             "eofTerminates": true
         ]
         let json = JSON.parse(jsonString, options: options) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = ["b": [true, false, nil], "a": 10.5, "c": "\r\n"]
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }
@@ -107,7 +107,7 @@ class SwiftWebServerTest: XCTestCase {
             "trailingComma": true
         ]
         let json = JSON.parse(jsonString, options: options) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = ["b": [true, false, nil], "a": 10.5, "c": "\r\n"]
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }
@@ -126,7 +126,7 @@ class SwiftWebServerTest: XCTestCase {
             "comments": true
         ]
         let json = JSON.parse(jsonString, options: options) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = ["b": [true, false, nil], "a": 10.5, "c": "\r\n"]
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }
@@ -138,7 +138,7 @@ class SwiftWebServerTest: XCTestCase {
         + "*/ c: \"\\r\\n\""
         var hasError = false
         let json = JSON.parseSettings(settingsString) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = ["b": [true, false, nil], "a": 10.5, "c": "\r\n"]
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }
@@ -157,7 +157,7 @@ class SwiftWebServerTest: XCTestCase {
         let jsonString = "{ \"a\": 10.5, \"b\": [true, false, null], \"c\": \"\\r\\n\", \"a\": 0}"
         var hasError = false
         let json = JSON.parse(jsonString) {_ in hasError = true}
-        println(json!.debugDescription)
+        print(json!.debugDescription)
         let expectedResult: JSON = ["b": [true, false, nil], "a": 0, "c": "\r\n"]
         XCTAssert(!hasError && json! == expectedResult, "Pass")
     }

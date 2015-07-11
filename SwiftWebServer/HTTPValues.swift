@@ -9,7 +9,7 @@
 import Foundation
 
 public typealias HTTPValueItem = (name: String, value: String?)
-public class HTTPValues: Printable, SequenceType {
+public class HTTPValues: CustomStringConvertible, SequenceType {
     public typealias Generator = Array<HTTPValueItem>.Generator
     let caseInsensitive: Bool
     private var scalarMapping: [String: String?] = [:]
@@ -82,7 +82,7 @@ public class HTTPValues: Printable, SequenceType {
         }
     }
     
-    private func removeItemsForName(var name: String) {
+    private func removeItemsForName(name: String) {
         if caseInsensitive {
             items = items.filter{$0.name.lowercaseString != name.lowercaseString}
         } else {

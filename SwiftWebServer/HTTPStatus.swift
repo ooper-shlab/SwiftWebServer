@@ -71,7 +71,7 @@ enum HTTPStatus: Int {
     case NotExtended
 }
 
-extension HTTPStatus: Printable {
+extension HTTPStatus: CustomStringConvertible {
     var description: String {
         switch self {
             //1xx

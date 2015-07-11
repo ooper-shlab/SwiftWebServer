@@ -29,14 +29,14 @@ class RegularExpression: NSRegularExpression {
         return result
     }
     
-    func stringByReplacingMatchesInString(string: String, options: NSMatchingOptions = nil, withBlock block: ReplacementBlock) -> String {
-        let range = NSRange(0..<count(string.utf16))
+    func stringByReplacingMatchesInString(string: String, options: NSMatchingOptions = [], withBlock block: ReplacementBlock) -> String {
+        let range = NSRange(0..<string.utf16.count)
         return self.stringByReplacingMatchesInString(string, options: options, range: range, withBlock: block)
     }
     
     func stringByReplacingMatchesInString(string: String, options: NSMatchingOptions, range: NSRange, withSimpleBlock block: SimpleReplacementBlock) -> String {
         replacementBlock = {result,string,offset,_ in
-            var matchedString = (string as NSString).substringWithRange(result.range)
+            let matchedString = (string as NSString).substringWithRange(result.range)
             return block(matchedString, offset)
         }
         let result = super.stringByReplacingMatchesInString(string, options: options, range: range, withTemplate: "")
@@ -44,16 +44,16 @@ class RegularExpression: NSRegularExpression {
         return result
     }
     
-    func stringByReplacingMatchesInString(string: String, options: NSMatchingOptions = nil, withSimpleBlock block: SimpleReplacementBlock) -> String {
-        let range = NSRange(0..<count(string.utf16))
+    func stringByReplacingMatchesInString(string: String, options: NSMatchingOptions = [], withSimpleBlock block: SimpleReplacementBlock) -> String {
+        let range = NSRange(0..<string.utf16.count)
         return self.stringByReplacingMatchesInString(string, options: options, range: range, withSimpleBlock: block)
     }
     
-    func matches(string: String, options: NSMatchingOptions = nil) -> Bool {
-        return matches(string, options: options, range: NSRange(0..<count(string.utf16)))
+    func matches(string: String, options: NSMatchingOptions = []) -> Bool {
+        return matches(string, options: options, range: NSRange(0..<string.utf16.count))
     }
     
-    func matches(string: String, options: NSMatchingOptions = nil, range: NSRange) -> Bool {
+    func matches(string: String, options: NSMatchingOptions = [], range: NSRange) -> Bool {
         return numberOfMatchesInString(string, options: options, range: range) > 0
     }
 }

@@ -32,7 +32,7 @@ class ChiefDirector: Director {
     func direct() {
         let host = request.headers["host"]
         let url = NSURL(scheme: "http", host: host, path: request.path!)!
-        println("url=\(url)")
+        print("url=\(url)")
         var documentPath = Options.instance.staticBase.stringByAppendingPathComponent(request.path!)
         let fileManager = NSFileManager.defaultManager()
         var isDirectory: ObjCBool = false
@@ -46,7 +46,7 @@ class ChiefDirector: Director {
                     }
                 }
             }
-            println("documentPath=\(documentPath)")
+            print("documentPath=\(documentPath)")
             if let fileData = NSData(contentsOfFile: documentPath) {
                 let ext = documentPath.pathExtension
                 if let type = Options.instance.types[ext] {
@@ -66,7 +66,6 @@ class ChiefDirector: Director {
         response.contentType = "text/html"
         response.status = HTTPStatus.NotFound
         response.sendHeaders()
-        let z = ""
         send("<h1>\(response.status.fullDescription)</h1>\r\n")
         send("The requested resource \(request.path!) was not found on this server.<br>\r\n")
         response.transmitter.close()

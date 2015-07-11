@@ -72,19 +72,20 @@ class Options {
         let getopt = GetoptLong(shortopts: shortopts, longopts: longopts)
         if let config = getopt.option("c") {
             //TODO: load config file
+            print(config)
         }
         //All command line options overrides the settings in the config file
         if let staticBase = getopt.option("b") {
             self.staticBase = staticBase
         }
-        if let portStr = getopt.option("p"), port = portStr.toInt()
+        if let portStr = getopt.option("p"), port = Int(portStr)
             where port >= 0 && port < Int(UInt16.max) {
                 self.port = UInt16(port)
         }
         if let types = getopt.option("types") {
             self.types = types.componentsSeparatedByString(",").reduce([:]) {dict, pair in
                 var result = dict
-                if let sep = pair.rangeOfString(":", options: nil) {
+                if let sep = pair.rangeOfString(":", options: []) {
                     let key = pair.substringToIndex(sep.startIndex)
                         .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
                     let value = pair.substringFromIndex(sep.endIndex)

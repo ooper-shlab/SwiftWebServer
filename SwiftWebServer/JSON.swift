@@ -45,7 +45,7 @@ extension JSON {
     }
     public var isObject: Bool {
         switch self {
-        case OBJECT(let val):
+        case OBJECT:
             return true
         default:
             return false
@@ -226,10 +226,10 @@ extension JSON: StringLiteralConvertible {
 }
 extension JSON: StringInterpolationConvertible {
     public init(stringInterpolation strings: JSON...) {
-        self = .STRING(reduce(lazy(strings).map {$0.description}, "", +))
+        self = .STRING(lazy(strings).map {$0.description}.reduce("", combine: +))
     }
     public init<T>(stringInterpolationSegment expr: T) {
-        self = .STRING(toString(expr))
+        self = .STRING(String(expr))
     }
 }
 extension JSON: BooleanLiteralConvertible {
@@ -262,7 +262,7 @@ extension JSON: DictionaryLiteralConvertible {
 }
 //MARK: -
 //MARK: printing
-extension JSON: Printable, DebugPrintable {
+extension JSON: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         switch self {
         case STRING(let val):
@@ -297,10 +297,10 @@ extension JSON: Printable, DebugPrintable {
     }
     //minimum JSON compliant
     static let escapePattern = "[\"\\\\\\p{Cc}]"
-    static let escapeRegex = RegularExpression(pattern: escapePattern, options: nil, error: nil)!
+    static let escapeRegex = try! RegularExpression(pattern: escapePattern, options: [])
     static func escape(val: String) -> String {
         let result = escapeRegex.stringByReplacingMatchesInString(val) {match, _ in
-            var us = match.unicodeScalars[match.unicodeScalars.startIndex]
+            let us = match.unicodeScalars[match.unicodeScalars.startIndex]
             switch us {
             case "\r":
                 return "\\r"
@@ -334,9 +334,9 @@ extension JSON: Printable, DebugPrintable {
 //MARK: parsing
 extension JSON {
     
-    static let unescapeRegex = RegularExpression(pattern: JSON_ESCAPES, options: nil, error: nil)!
+    static let unescapeRegex = try! RegularExpression(pattern: JSON_ESCAPES, options: [])
     static func unescape(var val: String) -> String {
-        if val.hasPrefix("\"") && val.hasSuffix("\"") && count(val) >= 2 {
+        if val.hasPrefix("\"") && val.hasSuffix("\"") && val.characters.count >= 2 {
             val = val[val.startIndex.successor()..<val.endIndex.predecessor()]
         }
         //strict JSON
@@ -360,7 +360,7 @@ extension JSON {
                 return "/"
             default:
                 let value: UInt
-                if count(match) > 6 {
+                if match.characters.count > 6 {
                     let hi = (match as NSString).substringWithRange(NSRange(2..<6))
                     let lo = (match as NSString).substringWithRange(NSRange(8..<12))
                     value = (strtoul(hi, nil, 16) << 12 + strtoul(lo, nil, 16)) + 0x10000
@@ -446,8 +446,8 @@ extension JSON {
             options = processParseOptions(options)
         }
         let firstTokenRegex = options["firstTokenRegex"] as! NSRegularExpression
-        var range = NSRange(0..<count(string.utf16))
-        if let firstMatch = firstTokenRegex.firstMatchInString(string, options: nil, range: range) {
+        var range = NSRange(0..<string.utf16.count)
+        if let firstMatch = firstTokenRegex.firstMatchInString(string, options: [], range: range) {
             let firstToken = (string as NSString).substringWithRange(firstMatch.rangeAtIndex(1))
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
@@ -465,7 +465,7 @@ extension JSON {
         "eofTerminates": true,
     ])
     public static func parseSettings(string: String, onError: JSONErrorHandler? = nil) -> JSON? {
-        var range = NSRange(0..<count(string.utf16))
+        var range = NSRange(0..<string.utf16.count)
         return parseObject(string, &range, preprocessedSettingsOptions, onError)
     }
     
@@ -527,11 +527,11 @@ extension JSON {
         let firstPairPattern = "\\A"+SPACES+"(?:"+TRAILING_COMMA+"("+CLOSE_OBJECT+")|("+KEY+")"+SPACES+":"+SPACES+"("+FIRST_TOKEN+"))"
         let nextPairPattern = "\\A"+SPACES+"(?:"+TRAILING_COMMA+"("+CLOSE_OBJECT+")|"+COMMA+"("+KEY+")"+SPACES+":"+SPACES+"("+FIRST_TOKEN+"))"
         var result = options
-        result["firstTokenRegex"] = RegularExpression(pattern: firstTokenPattern, options: nil, error: nil)!
-        result["firstValueRegex"] = RegularExpression(pattern: firstValuePattern, options: nil, error: nil)!
-        result["nextValueRegex"] = RegularExpression(pattern: nextValuePattern, options: nil, error: nil)!
-        result["firstPairRegex"] = RegularExpression(pattern: firstPairPattern, options: nil, error: nil)!
-        result["nextPairRegex"] = RegularExpression(pattern: nextPairPattern, options: nil, error: nil)!
+        result["firstTokenRegex"] = try! RegularExpression(pattern: firstTokenPattern, options: [])
+        result["firstValueRegex"] = try! RegularExpression(pattern: firstValuePattern, options: [])
+        result["nextValueRegex"] = try! RegularExpression(pattern: nextValuePattern, options: [])
+        result["firstPairRegex"] = try! RegularExpression(pattern: firstPairPattern, options: [])
+        result["nextPairRegex"] = try! RegularExpression(pattern: nextPairPattern, options: [])
         return result
     }
     
@@ -559,7 +559,7 @@ extension JSON {
         var values: [JSON] = []
         let firstValueRegex = options["firstValueRegex"] as! NSRegularExpression
         let nextValueRegex = options["nextValueRegex"] as! NSRegularExpression
-        if let firstMatch = firstValueRegex.firstMatchInString(string, options: nil, range: range) {
+        if let firstMatch = firstValueRegex.firstMatchInString(string, options: [], range: range) {
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
             assert(firstMatch.numberOfRanges == 3)
@@ -574,7 +574,7 @@ extension JSON {
                 return nil
             }
         }
-        while let nextMatch = nextValueRegex.firstMatchInString(string, options: nil, range: range) {
+        while let nextMatch = nextValueRegex.firstMatchInString(string, options: [], range: range) {
             range.location += nextMatch.range.length
             range.length -= nextMatch.range.length
             assert(nextMatch.numberOfRanges == 3)
@@ -597,7 +597,7 @@ extension JSON {
         let firstPairRegex = options["firstPairRegex"] as! NSRegularExpression
         let nextPairRegex = options["nextPairRegex"] as! NSRegularExpression
         let duplicateKey = options["duplicateKey"] as? Bool ?? true //defaults true
-        if let firstMatch = firstPairRegex.firstMatchInString(string, options: nil, range: range) {
+        if let firstMatch = firstPairRegex.firstMatchInString(string, options: [], range: range) {
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
             assert(firstMatch.numberOfRanges == 4)
@@ -613,7 +613,7 @@ extension JSON {
                 return nil
             }
         }
-        while let nextMatch = nextPairRegex.firstMatchInString(string, options: nil, range: range) {
+        while let nextMatch = nextPairRegex.firstMatchInString(string, options: [], range: range) {
             range.location += nextMatch.range.length
             range.length -= nextMatch.range.length
             assert(nextMatch.numberOfRanges == 4)

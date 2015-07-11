@@ -11,7 +11,7 @@ import Foundation
 public class GetoptLong {
     public typealias OptionsType = (name: String, hasArg: Bool, argIsOptional: Bool, key: String)
     public typealias ArgumentType = (value: String, isDefault: Bool)
-    enum ErrorType {
+    enum GetoptErrorType {
         case MissingArg //Cannot find an argument for the option.
         case NotOption //begins with "--" or "-", but does not contain option characters.
     }
@@ -23,12 +23,12 @@ public class GetoptLong {
     
     var optargs: [String: ArgumentType] = [:]
     var nonOptionsArgs: [String] = []
-    var errors: [(arg: String, error: ErrorType)] = []
+    var errors: [(arg: String, error: GetoptErrorType)] = []
     
     /// See man page of getopt for shortopts, getopt_long for longopts
     public init(shortopts: String, longopts: [OptionsType]) {
         for var index = shortopts.startIndex; index < shortopts.endIndex; ++index {
-            var key = String(shortopts[index])
+            let key = String(shortopts[index])
             let next = index.successor()
             var hasArg = false
             var argIsOptional = false
@@ -46,7 +46,9 @@ public class GetoptLong {
         for longopt in longopts {
             self.longopts[longopt.name] = longopt
         }
+        /*
         argv = Array(Process.arguments[1..<Process.arguments.count])
+        */
     }
     
     private var processed: Bool = false
@@ -83,14 +85,14 @@ public class GetoptLong {
                     optargs[opt.key] = (argv[i + 1], false)
                     return 1    //skip 1 arg
                 } else {
-                    errors.append((arg: arg, error: ErrorType.MissingArg))
+                    errors.append((arg: arg, error: GetoptErrorType.MissingArg))
                     return -1
                 }
             } else {
                 optargs[opt.key] = ("", true)  //default value
             }
         } else {
-            errors.append((arg: arg, error: ErrorType.NotOption))
+            errors.append((arg: arg, error: GetoptErrorType.NotOption))
         }
         return 0
     }
@@ -102,9 +104,9 @@ public class GetoptLong {
     private func processShortOption(i: Int, _ arg: String) -> Int {
         let argName = arg.substringFromIndex(advance(arg.startIndex, 1))
         //temporal restriction
-        if count(argName) > 1 {
+        if argName.characters.count > 1 {
             for var index = argName.startIndex; index < argName.endIndex; ++index {
-                var optChar = String(argName[index])
+                let optChar = String(argName[index])
                 if let opt = shortopts[optChar] {
                     if opt.hasArg {
                         if index.successor() < argName.endIndex {
@@ -117,7 +119,7 @@ public class GetoptLong {
                             optargs[opt.key] = ("", true)
                             return 0
                         } else {
-                            let error = (arg: optChar, error: ErrorType.MissingArg)
+                            let error = (arg: optChar, error: GetoptErrorType.MissingArg)
                             errors.append(error)
                             return -1
                         }
@@ -126,7 +128,7 @@ public class GetoptLong {
                         return 0
                     }
                 } else {
-                    let error = (arg: optChar, error: ErrorType.NotOption)
+                    let error = (arg: optChar, error: GetoptErrorType.NotOption)
                     errors.append(error)
                     return -1
                 }
@@ -141,14 +143,14 @@ public class GetoptLong {
                     optargs[opt.key] = ("", true)
                     return 0
                 } else {
-                    errors.append((arg: arg, error: ErrorType.MissingArg))
+                    errors.append((arg: arg, error: GetoptErrorType.MissingArg))
                     return -1
                 }
             } else {
                 optargs[opt.key] = ("", true)  //default value
             }
         } else {
-            errors.append((arg: arg, error: ErrorType.NotOption))
+            errors.append((arg: arg, error: GetoptErrorType.NotOption))
         }
         return 0
     }
@@ -163,7 +165,7 @@ public class GetoptLong {
         self.processOptions()
         return self.optargs
     }
-    
+
     /// Returns option value for key
     public func option(key: String) -> String? {
         if let optarg = self.options[key] {

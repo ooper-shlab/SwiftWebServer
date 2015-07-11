@@ -9,14 +9,14 @@
 import Foundation
 
 extension Array {
-    func get(index: Int) -> T? {
+    func get(index: Int) -> Element? {
         if index >= 0 && index < self.count {
             return self[index]
         } else {
             return nil
         }
     }
-    subscript(opt index: Int) -> T? {
+    subscript(opt index: Int) -> Element? {
         if index >= 0 && index < self.count {
             return self[index]
         } else {
@@ -49,9 +49,9 @@ extension RequestValue {
     func asInt() -> Int? {
         switch self {
         case Text(let value):
-            return value.toInt()
+            return Int(value)
         case Array(let values):
-            return values.first?.toInt()
+            return values.first.flatMap{Int($0)}
         }
     }
 }
@@ -75,8 +75,8 @@ class HTTPRequest {
         self.headerData = receiver.receiveHeader()
         let requestHeader = NSString(data: headerData!, encoding: NSASCIIStringEncoding)! as String
         parseRequestHeader(requestHeader)
-        println("headers:\r\n\(headers)")
-        if let contentLength = headers["content-length"]?.toInt() {
+        print("headers:\r\n\(headers)")
+        if let contentLength = headers["content-length"].flatMap({Int($0)}) {
             _ = receiver.receiveBody(contentLength)
         }
     }

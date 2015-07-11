@@ -15,7 +15,7 @@ class HTTPTransmitter {
     }
     
     func send(message: String) {
-        write(socket, message, count(message.utf8))
+        write(socket, message, message.utf8.count)
     }
     
     func send(data: NSData) {
