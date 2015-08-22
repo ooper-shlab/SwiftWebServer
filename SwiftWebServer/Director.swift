@@ -33,22 +33,22 @@ class ChiefDirector: Director {
         let host = request.headers["host"]
         let url = NSURL(scheme: "http", host: host, path: request.path!)!
         print("url=\(url)")
-        var documentPath = Options.instance.staticBase.stringByAppendingPathComponent(request.path!)
+        var documentURL = Options.instance.staticBaseURL.URLByAppendingPathComponent(request.path!)
         let fileManager = NSFileManager.defaultManager()
         var isDirectory: ObjCBool = false
-        if fileManager.fileExistsAtPath(documentPath, isDirectory: &isDirectory) {
+        if fileManager.fileExistsAtPath(documentURL.path!, isDirectory: &isDirectory) {
             if isDirectory {
                 for file in Options.instance.defaults {
-                    let path = documentPath.stringByAppendingPathComponent(file)
-                    if fileManager.fileExistsAtPath(path, isDirectory: &isDirectory) && !isDirectory {
-                        documentPath = path
+                    let fileURL = documentURL.URLByAppendingPathComponent(file)
+                    if fileManager.fileExistsAtPath(fileURL.path!, isDirectory: &isDirectory) && !isDirectory {
+                        documentURL = fileURL
                         break
                     }
                 }
             }
-            print("documentPath=\(documentPath)")
-            if let fileData = NSData(contentsOfFile: documentPath) {
-                let ext = documentPath.pathExtension
+            print("documentURL=\(documentURL)")
+            if let fileData = NSData(contentsOfURL: documentURL) {
+                let ext = documentURL.pathExtension ?? ""
                 if let type = Options.instance.types[ext] {
                     response.contentType = type
                 } else {

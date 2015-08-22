@@ -12,6 +12,9 @@
 		D799CD821AFB06AE00874E3C /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = D799CD801AFB008100874E3C /* JSON.swift */; };
 		D799CDC71AFB8CAF00874E3C /* GetoptLong.swift in Sources */ = {isa = PBXBuildFile; fileRef = D799CD851AFB169900874E3C /* GetoptLong.swift */; };
 		D79C54FC1AECB5FE0032275E /* HTTPReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79C54FB1AECB5FE0032275E /* HTTPReceiver.swift */; };
+		D7AF58931B88A62E00CF2042 /* OOPRegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF58921B88A62E00CF2042 /* OOPRegularExpression.swift */; };
+		D7AF58951B88A76900CF2042 /* NSRegularExpression+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF58941B88A76900CF2042 /* NSRegularExpression+.swift */; };
+		D7AF58961B88A81F00CF2042 /* OOPRegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF58921B88A62E00CF2042 /* OOPRegularExpression.swift */; };
 		D7B37D7E19EA9B110051702B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B37D7D19EA9B110051702B /* main.swift */; };
 		D7B37D8519EA9C1D0051702B /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B37D8419EA9C1D0051702B /* Options.swift */; };
 		D7B37D8719EAD7560051702B /* Internet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B37D8619EAD7560051702B /* Internet.swift */; };
@@ -24,9 +27,7 @@
 		D7FCEB6C1AF656510011B75D /* HTTPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FCEB6B1AF656510011B75D /* HTTPResponse.swift */; };
 		D7FCEB6E1AF66D720011B75D /* HTTPValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FCEB6D1AF66D720011B75D /* HTTPValues.swift */; };
 		D7FCEB701AF69B900011B75D /* HTTPStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FCEB6F1AF69B900011B75D /* HTTPStatus.swift */; };
-		D7FCEBEC1AF8A7CF0011B75D /* RegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FCEBEB1AF8A7CF0011B75D /* RegularExpression.swift */; };
 		D7FCEBF61AF917030011B75D /* SwiftWebServerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FCEBF51AF917030011B75D /* SwiftWebServerTest.swift */; };
-		D7FCEBFB1AF9173D0011B75D /* RegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FCEBEB1AF8A7CF0011B75D /* RegularExpression.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -48,6 +49,8 @@
 		D799CDC81AFB9E4200874E3C /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		D799CDC91AFB9E4200874E3C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D79C54FB1AECB5FE0032275E /* HTTPReceiver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPReceiver.swift; sourceTree = "<group>"; };
+		D7AF58921B88A62E00CF2042 /* OOPRegularExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OOPRegularExpression.swift; sourceTree = "<group>"; };
+		D7AF58941B88A76900CF2042 /* NSRegularExpression+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSRegularExpression+.swift"; sourceTree = "<group>"; };
 		D7B37D7A19EA9B110051702B /* SwiftWebServer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SwiftWebServer; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B37D7D19EA9B110051702B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		D7B37D8419EA9C1D0051702B /* Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
@@ -61,7 +64,6 @@
 		D7FCEB6B1AF656510011B75D /* HTTPResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPResponse.swift; sourceTree = "<group>"; };
 		D7FCEB6D1AF66D720011B75D /* HTTPValues.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPValues.swift; sourceTree = "<group>"; };
 		D7FCEB6F1AF69B900011B75D /* HTTPStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPStatus.swift; sourceTree = "<group>"; };
-		D7FCEBEB1AF8A7CF0011B75D /* RegularExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegularExpression.swift; sourceTree = "<group>"; };
 		D7FCEBF11AF917030011B75D /* SwiftWebServerTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftWebServerTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7FCEBF41AF917030011B75D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D7FCEBF51AF917030011B75D /* SwiftWebServerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftWebServerTest.swift; sourceTree = "<group>"; };
@@ -129,9 +131,10 @@
 		D7FCEB661AF64EC60011B75D /* OOPUtils */ = {
 			isa = PBXGroup;
 			children = (
+				D7AF58921B88A62E00CF2042 /* OOPRegularExpression.swift */,
+				D7AF58941B88A76900CF2042 /* NSRegularExpression+.swift */,
 				D799CD851AFB169900874E3C /* GetoptLong.swift */,
 				D7B37DA519EBF1840051702B /* Functions.swift */,
-				D7FCEBEB1AF8A7CF0011B75D /* RegularExpression.swift */,
 				D799CD801AFB008100874E3C /* JSON.swift */,
 			);
 			name = OOPUtils;
@@ -251,14 +254,15 @@
 				D7B37D8519EA9C1D0051702B /* Options.swift in Sources */,
 				D7FCEB6A1AF655D20011B75D /* HTTPTransmitter.swift in Sources */,
 				D7B37DA019EBBD5D0051702B /* TCPListener.swift in Sources */,
-				D7FCEBEC1AF8A7CF0011B75D /* RegularExpression.swift in Sources */,
 				D799CDC71AFB8CAF00874E3C /* GetoptLong.swift in Sources */,
 				D7FCEB6E1AF66D720011B75D /* HTTPValues.swift in Sources */,
+				D7AF58931B88A62E00CF2042 /* OOPRegularExpression.swift in Sources */,
 				D728087D1AED2B1700369B9A /* HTTPRequest.swift in Sources */,
 				D7FCEB6C1AF656510011B75D /* HTTPResponse.swift in Sources */,
 				D799CD811AFB008100874E3C /* JSON.swift in Sources */,
 				D79C54FC1AECB5FE0032275E /* HTTPReceiver.swift in Sources */,
 				D7B37D7E19EA9B110051702B /* main.swift in Sources */,
+				D7AF58951B88A76900CF2042 /* NSRegularExpression+.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,8 +271,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D799CD821AFB06AE00874E3C /* JSON.swift in Sources */,
+				D7AF58961B88A81F00CF2042 /* OOPRegularExpression.swift in Sources */,
 				D7FCEBF61AF917030011B75D /* SwiftWebServerTest.swift in Sources */,
-				D7FCEBFB1AF9173D0011B75D /* RegularExpression.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

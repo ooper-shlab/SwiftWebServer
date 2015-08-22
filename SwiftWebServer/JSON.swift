@@ -297,36 +297,36 @@ extension JSON: CustomStringConvertible, CustomDebugStringConvertible {
     }
     //minimum JSON compliant
     static let escapePattern = "[\"\\\\\\p{Cc}]"
-    static let escapeRegex = try! RegularExpression(pattern: escapePattern, options: [])
-    static func escape(val: String) -> String {
-        let result = escapeRegex.stringByReplacingMatchesInString(val) {match, _ in
-            let us = match.unicodeScalars[match.unicodeScalars.startIndex]
-            switch us {
-            case "\r":
-                return "\\r"
-            case "\n":
-                return "\\n"
-            case "\t":
-                return "\\t"
-            case "\u{8}":
-                return "\\b"
-            case "\u{c}":
-                return "\\f"
-            case "\"":
-                return "\\\""
-            case "\\":
-                return "\\\\"
-            default:
-                let ch = us.value
-                if ch < 0x10000 {
-                    return String(format: "\\u%04x", ch)
-                } else {
-                    let hi = ((ch-0x10000) >> 12) + 0xD800
-                    let lo = (ch & 0x3FF) + 0xDC00
-                    return String(format: "\\u%04x\\u%04x", hi, lo)
-                }
+    static let escapeRegex = try! OOPRegularExpression(pattern: escapePattern, options: []) {match, _ in
+        let us = match.unicodeScalars[match.unicodeScalars.startIndex]
+        switch us {
+        case "\r":
+            return "\\r"
+        case "\n":
+            return "\\n"
+        case "\t":
+            return "\\t"
+        case "\u{8}":
+            return "\\b"
+        case "\u{c}":
+            return "\\f"
+        case "\"":
+            return "\\\""
+        case "\\":
+            return "\\\\"
+        default:
+            let ch = us.value
+            if ch < 0x10000 {
+                return String(format: "\\u%04x", ch)
+            } else {
+                let hi = ((ch-0x10000) >> 12) + 0xD800
+                let lo = (ch & 0x3FF) + 0xDC00
+                return String(format: "\\u%04x\\u%04x", hi, lo)
             }
         }
+    }
+    static func escape(val: String) -> String {
+        let result = escapeRegex.stringByReplacingMatchesInString(val)
         return result
     }
 }
@@ -334,43 +334,43 @@ extension JSON: CustomStringConvertible, CustomDebugStringConvertible {
 //MARK: parsing
 extension JSON {
     
-    static let unescapeRegex = try! RegularExpression(pattern: JSON_ESCAPES, options: [])
+    static let unescapeRegex = try! OOPRegularExpression(pattern: JSON_ESCAPES, options: []) {match, _ in
+        switch match {
+        case "\\r":
+            return "\r"
+        case "\\n":
+            return "\n"
+        case "\\t":
+            return "\t"
+        case "\\b":
+            return "\u{8}"
+        case "\\f":
+            return "\u{c}"
+        case "\\\"":
+            return "\""
+        case "\\\\":
+            return "\\"
+        case "\\/":
+            return "/"
+        default:
+            let value: UInt
+            if match.characters.count > 6 {
+                let hi = (match as NSString).substringWithRange(NSRange(2..<6))
+                let lo = (match as NSString).substringWithRange(NSRange(8..<12))
+                value = (strtoul(hi, nil, 16) << 12 + strtoul(lo, nil, 16)) + 0x10000
+            } else {
+                let hex = (match as NSString).substringWithRange(NSRange(2..<6))
+                value = strtoul(hex, nil, 16)
+            }
+            return String(UnicodeScalar(UInt32(value)))
+        }
+    }
     static func unescape(var val: String) -> String {
         if val.hasPrefix("\"") && val.hasSuffix("\"") && val.characters.count >= 2 {
             val = val[val.startIndex.successor()..<val.endIndex.predecessor()]
         }
         //strict JSON
-        let result = unescapeRegex.stringByReplacingMatchesInString(val) {match, _ in
-            switch match {
-            case "\\r":
-                return "\r"
-            case "\\n":
-                return "\n"
-            case "\\t":
-                return "\t"
-            case "\\b":
-                return "\u{8}"
-            case "\\f":
-                return "\u{c}"
-            case "\\\"":
-                return "\""
-            case "\\\\":
-                return "\\"
-            case "\\/":
-                return "/"
-            default:
-                let value: UInt
-                if match.characters.count > 6 {
-                    let hi = (match as NSString).substringWithRange(NSRange(2..<6))
-                    let lo = (match as NSString).substringWithRange(NSRange(8..<12))
-                    value = (strtoul(hi, nil, 16) << 12 + strtoul(lo, nil, 16)) + 0x10000
-                } else {
-                    let hex = (match as NSString).substringWithRange(NSRange(2..<6))
-                    value = strtoul(hex, nil, 16)
-                }
-                return String(UnicodeScalar(UInt32(value)))
-            }
-        }
+        let result = unescapeRegex.stringByReplacingMatchesInString(val)
         return result
     }
     
@@ -527,11 +527,11 @@ extension JSON {
         let firstPairPattern = "\\A"+SPACES+"(?:"+TRAILING_COMMA+"("+CLOSE_OBJECT+")|("+KEY+")"+SPACES+":"+SPACES+"("+FIRST_TOKEN+"))"
         let nextPairPattern = "\\A"+SPACES+"(?:"+TRAILING_COMMA+"("+CLOSE_OBJECT+")|"+COMMA+"("+KEY+")"+SPACES+":"+SPACES+"("+FIRST_TOKEN+"))"
         var result = options
-        result["firstTokenRegex"] = try! RegularExpression(pattern: firstTokenPattern, options: [])
-        result["firstValueRegex"] = try! RegularExpression(pattern: firstValuePattern, options: [])
-        result["nextValueRegex"] = try! RegularExpression(pattern: nextValuePattern, options: [])
-        result["firstPairRegex"] = try! RegularExpression(pattern: firstPairPattern, options: [])
-        result["nextPairRegex"] = try! RegularExpression(pattern: nextPairPattern, options: [])
+        result["firstTokenRegex"] = try! NSRegularExpression(pattern: firstTokenPattern, options: [])
+        result["firstValueRegex"] = try! NSRegularExpression(pattern: firstValuePattern, options: [])
+        result["nextValueRegex"] = try! NSRegularExpression(pattern: nextValuePattern, options: [])
+        result["firstPairRegex"] = try! NSRegularExpression(pattern: firstPairPattern, options: [])
+        result["nextPairRegex"] = try! NSRegularExpression(pattern: nextPairPattern, options: [])
         return result
     }
     

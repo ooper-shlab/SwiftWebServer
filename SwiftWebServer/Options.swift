@@ -41,6 +41,11 @@ class Options {
     private(set) var port: UInt16 = 8080
     private(set) var backlogs: Int32 = 16
     private(set) var staticBase: String = "/Library/WebServer/Documents"
+    var staticBaseURL: NSURL {
+        let url = NSURL(string: staticBase)
+        assert(url != nil)
+        return url!
+    }
     private(set) var types: [String: String] = [
         "html": "text/html",
         "htm": "text/html",
