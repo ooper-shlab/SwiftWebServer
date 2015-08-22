@@ -8,53 +8,36 @@
 
 import Foundation
 
-extension Array {
-    func get(index: Int) -> Element? {
-        if index >= 0 && index < self.count {
-            return self[index]
-        } else {
-            return nil
-        }
-    }
-    subscript(opt index: Int) -> Element? {
-        if index >= 0 && index < self.count {
-            return self[index]
-        } else {
-            return nil
-        }
-    }
-}
-
-enum RequestValue {
-    case Text(String)
-    case Array([String])
-}
-extension RequestValue {
-    func asArray() -> [String] {
-        switch self {
-        case Text(let value):
-            return [value]
-        case Array(let values):
-            return values
-        }
-    }
-    func asText() -> String {
-        switch self {
-        case Text(let value):
-            return value
-        case Array(let values):
-            return values.first ?? ""
-        }
-    }
-    func asInt() -> Int? {
-        switch self {
-        case Text(let value):
-            return Int(value)
-        case Array(let values):
-            return values.first.flatMap{Int($0)}
-        }
-    }
-}
+//enum RequestValue {
+//    case Text(String)
+//    case Array([String])
+//}
+//extension RequestValue {
+//    func asArray() -> [String] {
+//        switch self {
+//        case Text(let value):
+//            return [value]
+//        case Array(let values):
+//            return values
+//        }
+//    }
+//    func asText() -> String {
+//        switch self {
+//        case Text(let value):
+//            return value
+//        case Array(let values):
+//            return values.first ?? ""
+//        }
+//    }
+//    func asInt() -> Int? {
+//        switch self {
+//        case Text(let value):
+//            return Int(value)
+//        case Array(let values):
+//            return values.first.flatMap{Int($0)}
+//        }
+//    }
+//}
 class HTTPRequest {
     var headerData: NSData?
     var bodyData: NSData?

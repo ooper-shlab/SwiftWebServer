@@ -15,6 +15,9 @@
 		D7AF58931B88A62E00CF2042 /* OOPRegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF58921B88A62E00CF2042 /* OOPRegularExpression.swift */; };
 		D7AF58951B88A76900CF2042 /* NSRegularExpression+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF58941B88A76900CF2042 /* NSRegularExpression+.swift */; };
 		D7AF58961B88A81F00CF2042 /* OOPRegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF58921B88A62E00CF2042 /* OOPRegularExpression.swift */; };
+		D7AF58981B88ADE200CF2042 /* HTTPConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF58971B88ADE200CF2042 /* HTTPConstants.swift */; };
+		D7AF589A1B88AE1D00CF2042 /* NSData+suffix.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF58991B88AE1D00CF2042 /* NSData+suffix.swift */; };
+		D7AF589D1B88AF0300CF2042 /* Array+opt.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7AF589B1B88AF0300CF2042 /* Array+opt.swift */; };
 		D7B37D7E19EA9B110051702B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B37D7D19EA9B110051702B /* main.swift */; };
 		D7B37D8519EA9C1D0051702B /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B37D8419EA9C1D0051702B /* Options.swift */; };
 		D7B37D8719EAD7560051702B /* Internet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B37D8619EAD7560051702B /* Internet.swift */; };
@@ -51,6 +54,9 @@
 		D79C54FB1AECB5FE0032275E /* HTTPReceiver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPReceiver.swift; sourceTree = "<group>"; };
 		D7AF58921B88A62E00CF2042 /* OOPRegularExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OOPRegularExpression.swift; sourceTree = "<group>"; };
 		D7AF58941B88A76900CF2042 /* NSRegularExpression+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSRegularExpression+.swift"; sourceTree = "<group>"; };
+		D7AF58971B88ADE200CF2042 /* HTTPConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPConstants.swift; sourceTree = "<group>"; };
+		D7AF58991B88AE1D00CF2042 /* NSData+suffix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+suffix.swift"; sourceTree = "<group>"; };
+		D7AF589B1B88AF0300CF2042 /* Array+opt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+opt.swift"; sourceTree = "<group>"; };
 		D7B37D7A19EA9B110051702B /* SwiftWebServer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SwiftWebServer; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B37D7D19EA9B110051702B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		D7B37D8419EA9C1D0051702B /* Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
@@ -116,6 +122,7 @@
 				D728087C1AED2B1700369B9A /* HTTPRequest.swift */,
 				D7FCEB6B1AF656510011B75D /* HTTPResponse.swift */,
 				D7B37DA119EBD2030051702B /* HTTPConnectionHandler.swift */,
+				D7AF58971B88ADE200CF2042 /* HTTPConstants.swift */,
 				D7B37D9F19EBBD5D0051702B /* TCPListener.swift */,
 				D7B37D8419EA9C1D0051702B /* Options.swift */,
 				D7B37D8619EAD7560051702B /* Internet.swift */,
@@ -131,6 +138,8 @@
 		D7FCEB661AF64EC60011B75D /* OOPUtils */ = {
 			isa = PBXGroup;
 			children = (
+				D7AF589B1B88AF0300CF2042 /* Array+opt.swift */,
+				D7AF58991B88AE1D00CF2042 /* NSData+suffix.swift */,
 				D7AF58921B88A62E00CF2042 /* OOPRegularExpression.swift */,
 				D7AF58941B88A76900CF2042 /* NSRegularExpression+.swift */,
 				D799CD851AFB169900874E3C /* GetoptLong.swift */,
@@ -246,6 +255,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7FCEB681AF653DC0011B75D /* Director.swift in Sources */,
+				D7AF589A1B88AE1D00CF2042 /* NSData+suffix.swift in Sources */,
 				D7B37D8719EAD7560051702B /* Internet.swift in Sources */,
 				D7FCEB701AF69B900011B75D /* HTTPStatus.swift in Sources */,
 				D7B37DA219EBD2030051702B /* HTTPConnectionHandler.swift in Sources */,
@@ -255,6 +265,7 @@
 				D7FCEB6A1AF655D20011B75D /* HTTPTransmitter.swift in Sources */,
 				D7B37DA019EBBD5D0051702B /* TCPListener.swift in Sources */,
 				D799CDC71AFB8CAF00874E3C /* GetoptLong.swift in Sources */,
+				D7AF589D1B88AF0300CF2042 /* Array+opt.swift in Sources */,
 				D7FCEB6E1AF66D720011B75D /* HTTPValues.swift in Sources */,
 				D7AF58931B88A62E00CF2042 /* OOPRegularExpression.swift in Sources */,
 				D728087D1AED2B1700369B9A /* HTTPRequest.swift in Sources */,
@@ -262,6 +273,7 @@
 				D799CD811AFB008100874E3C /* JSON.swift in Sources */,
 				D79C54FC1AECB5FE0032275E /* HTTPReceiver.swift in Sources */,
 				D7B37D7E19EA9B110051702B /* main.swift in Sources */,
+				D7AF58981B88ADE200CF2042 /* HTTPConstants.swift in Sources */,
 				D7AF58951B88A76900CF2042 /* NSRegularExpression+.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

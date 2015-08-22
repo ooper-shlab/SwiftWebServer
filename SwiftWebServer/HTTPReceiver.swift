@@ -8,20 +8,6 @@
 
 import Foundation
 
-extension NSData {
-    func hasSuffix(bytes: UInt8...) -> Bool {
-        if self.length < bytes.count { return false }
-        let ptr = UnsafePointer<UInt8>(self.bytes)
-        for (i, byte) in bytes.enumerate() {
-            if ptr[self.length - bytes.count + i] != byte {
-                return false
-            }
-        }
-        return true
-    }
-}
-let CR = UInt8(ascii: "\r")
-let LF = UInt8(ascii: "\n")
 class HTTPReceiver {
     private(set) var secure: Bool = false
     
@@ -43,7 +29,6 @@ class HTTPReceiver {
             let len = read(self.socket, &buffer, 1024)
             //TODO: error check, timeout check
             headerData.appendBytes(buffer, length: len)
-            let emptyLineData = NSData(bytes: [CR, LF, CR, LF], length: 4)
             let emptyLine = headerData.rangeOfData(emptyLineData, options: [], range: NSRange(currentHeaderBottom..<headerData.length))
             if emptyLine.location == NSNotFound {
                 if headerData.hasSuffix(CR, LF, CR) {
