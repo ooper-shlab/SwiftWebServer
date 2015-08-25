@@ -78,7 +78,7 @@ public class GetoptLong {
     }
     
     private func processLongOption(i: Int, _ arg: String) -> Int {
-        let argName = arg.substringFromIndex(advance(arg.startIndex, 2))
+        let argName = arg.substringFromIndex(arg.startIndex.advancedBy(2))
         if let opt = longopts[argName] {
             if opt.hasArg {
                 if i + 1 < argv.count && !isOption(argv[i + 1]) {
@@ -102,7 +102,7 @@ public class GetoptLong {
     }
     
     private func processShortOption(i: Int, _ arg: String) -> Int {
-        let argName = arg.substringFromIndex(advance(arg.startIndex, 1))
+        let argName = arg.substringFromIndex(arg.startIndex.advancedBy(1))
         //temporal restriction
         if argName.characters.count > 1 {
             for var index = argName.startIndex; index < argName.endIndex; ++index {

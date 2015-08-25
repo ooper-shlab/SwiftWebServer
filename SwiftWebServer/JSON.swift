@@ -226,7 +226,7 @@ extension JSON: StringLiteralConvertible {
 }
 extension JSON: StringInterpolationConvertible {
     public init(stringInterpolation strings: JSON...) {
-        self = .STRING(lazy(strings).map {$0.description}.reduce("", combine: +))
+        self = .STRING(strings.lazy.map {$0.description}.reduce("", combine: +))
     }
     public init<T>(stringInterpolationSegment expr: T) {
         self = .STRING(String(expr))
@@ -288,9 +288,9 @@ extension JSON: CustomStringConvertible, CustomDebugStringConvertible {
         case BOOL(let val):
             return val.description
         case OBJECT(let val):
-            return "{" + ", ".join(lazy(val).map{"\"\(JSON.escape($0))\": \($1.debugDescription)"}) + "}"
+            return "{" + val.lazy.map{"\"\(JSON.escape($0))\": \($1.debugDescription)"}.joinWithSeparator(", ") + "}"
         case ARRAY(let val):
-            return "[" + ", ".join(lazy(val).map{$0.debugDescription}) + "]"
+            return "[" + val.lazy.map{$0.debugDescription}.joinWithSeparator(", ") + "]"
         case NULL:
             return "null"
         }

@@ -6,7 +6,7 @@ Created by OOPer in cooperation with shlab.jp, on 2015/5/7.
 ===========================================================================
 BUILD REQUIREMENTS:
 
-Xcode 7 beta 3, OS X SDK 10.11
+Xcode 7 beta 6, OS X SDK 10.11
 
 ===========================================================================
 RUNTIME REQUIREMENTS:
