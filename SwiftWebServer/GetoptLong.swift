@@ -3,60 +3,60 @@
 //  OOPUtils
 //
 //  Created by OOPer in cooperation with shlab.jp, on 2014/12/16.
-//  Copyright (c) 2014-2015 OOPer (NAGATA, Atsuyuki). All rights reserved.
+//  Updated for Swift 3 on 2016/12/9
+//  Copyright (c) 2014-2016 OOPer (NAGATA, Atsuyuki). All rights reserved.
 //
 
 import Foundation
 
-public class GetoptLong {
+open class GetoptLong {
     public typealias OptionsType = (name: String, hasArg: Bool, argIsOptional: Bool, key: String)
-    public typealias ArgumentType = (value: String, isDefault: Bool)
+    public typealias ArgumentType = (value: String?, isDefault: Bool)
     enum GetoptErrorType {
-        case MissingArg //Cannot find an argument for the option.
-        case NotOption //begins with "--" or "-", but does not contain option characters.
+        case missingArg //Cannot find an argument for the option.
+        case notOption //begins with "--" or "-", but does not contain option characters.
     }
     
-    var argv: [String] = []
+    private var argv: [String] = []
     
-    var shortopts: [String: OptionsType] = [:]
-    var longopts: [String: OptionsType] = [:]
+    private(set) var shortopts: [String: OptionsType] = [:]
+    private(set) var longopts: [String: OptionsType] = [:]
     
-    var optargs: [String: ArgumentType] = [:]
-    var nonOptionsArgs: [String] = []
-    var errors: [(arg: String, error: GetoptErrorType)] = []
+    private var optargs: [String: ArgumentType] = [:]
+    private var nonOptionsArgs: [String] = []
+    private(set) var errors: [(arg: String, error: GetoptErrorType)] = []
     
     /// See man page of getopt for shortopts, getopt_long for longopts
-    public init(shortopts: String, longopts: [OptionsType]) {
-        for var index = shortopts.startIndex; index < shortopts.endIndex; ++index {
+    public init(shortopts: String = "", longopts: [OptionsType] = []) {
+        var index = shortopts.startIndex
+        while index < shortopts.endIndex {
             let key = String(shortopts[index])
-            let next = index.successor()
+            let next = shortopts.index(after: index)
             var hasArg = false
             var argIsOptional = false
             if next < shortopts.endIndex && shortopts[next] == ":" {
                 index = next
                 hasArg = true
-                let nextToNext = next.successor()
+                let nextToNext = shortopts.index(after: next)
                 if nextToNext < shortopts.endIndex && shortopts[nextToNext] == ":" {
                     argIsOptional = true
                     index = nextToNext
                 }
             }
             self.shortopts[key] = (key, hasArg, argIsOptional, key)
+            
+            shortopts.characters.formIndex(after: &index)
         }
         for longopt in longopts {
             self.longopts[longopt.name] = longopt
         }
-        /*
-        argv = Array(Process.arguments[1..<Process.arguments.count])
-        */
     }
     
-    private var processed: Bool = false
-    
-    private func processOptions() {
-        if processed {return}
+    public func processOptions(arguments: [String] = CommandLine.arguments, startIndex: Int = 1) {
+        self.argv = arguments
         var optionFinished = false
-        for var i = 0; i < argv.count; ++i {
+        var i = startIndex
+        while i < argv.count  {
             let arg = argv[i]
             if optionFinished {
                 nonOptionsArgs.append(arg)
@@ -73,44 +73,44 @@ public class GetoptLong {
             } else {
                 nonOptionsArgs.append(arg)
             }
+            i += 1
         }
-        processed = true
     }
     
-    private func processLongOption(i: Int, _ arg: String) -> Int {
-        let argName = arg.substringFromIndex(arg.startIndex.advancedBy(2))
+    private func processLongOption(_ i: Int, _ arg: String) -> Int {
+        let argName = arg.substring(from: arg.index(arg.startIndex, offsetBy: 2))
         if let opt = longopts[argName] {
             if opt.hasArg {
                 if i + 1 < argv.count && !isOption(argv[i + 1]) {
                     optargs[opt.key] = (argv[i + 1], false)
                     return 1    //skip 1 arg
                 } else {
-                    errors.append((arg: arg, error: GetoptErrorType.MissingArg))
+                    errors.append((arg: arg, error: GetoptErrorType.missingArg))
                     return -1
                 }
             } else {
-                optargs[opt.key] = ("", true)  //default value
+                optargs[opt.key] = (nil, true)  //default value
             }
         } else {
-            errors.append((arg: arg, error: GetoptErrorType.NotOption))
+            errors.append((arg: arg, error: GetoptErrorType.notOption))
         }
         return 0
     }
     
-    private func isOption(arg: String) -> Bool {
+    private func isOption(_ arg: String) -> Bool {
         return arg != "-" && arg.hasPrefix("-")
     }
     
-    private func processShortOption(i: Int, _ arg: String) -> Int {
-        let argName = arg.substringFromIndex(arg.startIndex.advancedBy(1))
+    private func processShortOption(_ i: Int, _ arg: String) -> Int {
+        let argName = arg.substring(from: arg.index(after: arg.startIndex))
         //temporal restriction
         if argName.characters.count > 1 {
-            for var index = argName.startIndex; index < argName.endIndex; ++index {
+            for index in argName.characters.indices {
                 let optChar = String(argName[index])
                 if let opt = shortopts[optChar] {
                     if opt.hasArg {
-                        if index.successor() < argName.endIndex {
-                            optargs[opt.key] = (argName.substringFromIndex(index.successor()), false)
+                        if argName.index(after: index) < argName.endIndex {
+                            optargs[opt.key] = (argName.substring(from: argName.index(after: index)), false)
                             return 0    //skip 0 arg
                         } else if i + 1 < argv.count && !isOption(argv[i + 1]) {
                             optargs[opt.key] = (argv[i + 1], false)
@@ -119,16 +119,16 @@ public class GetoptLong {
                             optargs[opt.key] = ("", true)
                             return 0
                         } else {
-                            let error = (arg: optChar, error: GetoptErrorType.MissingArg)
+                            let error = (arg: optChar, error: GetoptErrorType.missingArg)
                             errors.append(error)
                             return -1
                         }
                     } else {
-                        optargs[opt.key] = ("", true)  //default value
+                        optargs[opt.key] = (nil, true)  //default value
                         return 0
                     }
                 } else {
-                    let error = (arg: optChar, error: GetoptErrorType.NotOption)
+                    let error = (arg: optChar, error: GetoptErrorType.notOption)
                     errors.append(error)
                     return -1
                 }
@@ -143,31 +143,29 @@ public class GetoptLong {
                     optargs[opt.key] = ("", true)
                     return 0
                 } else {
-                    errors.append((arg: arg, error: GetoptErrorType.MissingArg))
+                    errors.append((arg: arg, error: GetoptErrorType.missingArg))
                     return -1
                 }
             } else {
                 optargs[opt.key] = ("", true)  //default value
             }
         } else {
-            errors.append((arg: arg, error: GetoptErrorType.NotOption))
+            errors.append((arg: arg, error: GetoptErrorType.notOption))
         }
         return 0
     }
-
+    
     /// Returns args without options
-    public var args: [String] {
-        self.processOptions()
+    open var args: [String] {
         return self.nonOptionsArgs
     }
     
-    public var options: [String: ArgumentType] {
-        self.processOptions()
+    open var options: [String: ArgumentType] {
         return self.optargs
     }
-
+    
     /// Returns option value for key
-    public func option(key: String) -> String? {
+    open func option(_ key: String) -> String? {
         if let optarg = self.options[key] {
             return optarg.value
         }

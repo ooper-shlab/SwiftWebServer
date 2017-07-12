@@ -14,15 +14,17 @@ class HTTPTransmitter {
         self.socket = socket
     }
     
-    func send(message: String) {
+    func send(_ message: String) {
         write(socket, message, message.utf8.count)
     }
     
-    func send(data: NSData) {
-        write(socket, data.bytes, data.length)
+    func send(_ data: Data) {
+        _ = data.withUnsafeBytes {bytes in
+            write(socket, bytes, data.count)
+        }
     }
     
     func close() {
-        Darwin.close(socket)
+        _ = Darwin.close(socket)
     }
 }

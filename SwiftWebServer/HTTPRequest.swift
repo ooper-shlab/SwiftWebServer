@@ -39,16 +39,22 @@ import Foundation
 //    }
 //}
 class HTTPRequest {
-    var headerData: NSData?
-    var bodyData: NSData?
+    var headerData: Data?
+    var bodyData: Data?
     var remoteAddress: SocketAddress
     var receiver: HTTPReceiver
     var method: String?
     var path: String?
     var httpVersion: String?
-    var headers: HTTPValues = HTTPValues()
+    var headers: HTTPValues = HTTPValues(caseInsensitive: true)
     private(set) lazy var scheme: String = self.receiver.secure ? "https" : "http"
-    private(set) lazy var url: NSURL = NSURL(scheme: self.scheme, host: self.headers["host"], path: self.path!)!
+    private(set) lazy var url: URL = {
+        var urlComponents = URLComponents()
+        urlComponents.scheme = self.scheme
+        urlComponents.host = self.headers["host"]
+        urlComponents.path = self.path!
+        return urlComponents.url!
+    }()
     private(set) lazy var urlPath: String? = self.url.path
     private(set) lazy var urlQuery: String? = self.url.query
     
@@ -56,31 +62,31 @@ class HTTPRequest {
         self.remoteAddress = remoteAddress
         self.receiver = receiver
         self.headerData = receiver.receiveHeader()
-        let requestHeader = NSString(data: headerData!, encoding: NSASCIIStringEncoding)! as String
+        let requestHeader = String(data: headerData!, encoding: .ascii)!
         parseRequestHeader(requestHeader)
         print("headers:\r\n\(headers)")
         if let contentLength = headers["content-length"].flatMap({Int($0)}) {
             _ = receiver.receiveBody(contentLength)
         }
     }
-    func parseRequestHeader(requestHeader: String) {
+    func parseRequestHeader(_ requestHeader: String) {
         var lineNumber = 0
-        let spaces = NSCharacterSet.whitespaceAndNewlineCharacterSet()
+        let spaces = CharacterSet.whitespacesAndNewlines
         requestHeader.enumerateLines {line, stop in
             if lineNumber == 0 {
-                let methods = line.componentsSeparatedByCharactersInSet(spaces)
+                let methods = line.components(separatedBy: spaces)
                 self.method = methods[opt: 0]
                 self.path = methods[opt: 1]
                 self.httpVersion = methods[opt: 2]
                 NSLog("methods=%@", methods)
             } else {
-                if let index = line.rangeOfString(":") {
-                    let name = line.substringToIndex(index.startIndex)
-                    let value = line.substringFromIndex(index.endIndex).stringByTrimmingCharactersInSet(spaces)
-                    self.headers.append(value, forName: name)
+                if let index = line.range(of: ":") {
+                    let name = line.substring(to: index.lowerBound)
+                    let value = line.substring(from: index.upperBound).trimmingCharacters(in: spaces)
+                    self.headers.append(value, for: name)
                 }
             }
-            ++lineNumber
+            lineNumber += 1
         }
     }
 }

@@ -164,7 +164,7 @@ class SwiftWebServerTest: XCTestCase {
     
     func testPerformanceExample() {
         // This is an example of a performance test case.
-        self.measureBlock() {
+        self.measure() {
             let jsonString = "{ \"a\": 10.5, \"b\": [true, false, null], \"c\": \"\\r\\n\"}"
             var hasError = false
             let json = JSON.parse(jsonString) {_ in hasError = true}
@@ -173,7 +173,7 @@ class SwiftWebServerTest: XCTestCase {
     
     func testPerformance2() {
         // This is an example of a performance test case.
-        self.measureBlock() {
+        self.measure() {
             let jsonString = "{ \"a\": 10.5, \"b\": [true, false, null], \"c\": \"\\r\\n\"}"
             var hasError = false
             let json = JSON.parse(jsonString, options: self.options) {_ in hasError = true}

@@ -10,4 +10,4 @@ import Foundation
 
 let CR = UInt8(ascii: "\r")
 let LF = UInt8(ascii: "\n")
-let emptyLineData = NSData(bytes: [CR, LF, CR, LF], length: 4)
+let emptyLineData = Data(bytes: UnsafePointer<UInt8>([CR, LF, CR, LF]), count: 4)

@@ -9,9 +9,9 @@
 import Foundation
 
 class HTTPConnectionHandler {
-    static var handlerQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+    static var handlerQueue = DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default)
     
-    func handleConnection(clientSocket: Int32, sockAddr: SocketAddress) {
+    func handleConnection(_ clientSocket: Int32, sockAddr: SocketAddress) {
         autoreleasepool {
             let requestHandler = HTTPRequestHandler(socket: clientSocket, sockAddr: sockAddr,
                 queue: HTTPConnectionHandler.handlerQueue)

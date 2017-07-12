@@ -12,20 +12,20 @@ class HTTPRequestHandler {
     let requestSocket: Int32
     let requestAddress: SocketAddress
     let localAddress: SocketAddress
-    init(socket: Int32, sockAddr: SocketAddress, queue: dispatch_queue_t) {
+    init(socket: Int32, sockAddr: SocketAddress, queue: DispatchQueue) {
         self.requestSocket = socket
         self.requestAddress = sockAddr
         var localSockAddr: sockaddr = sockaddr()
-        var localSockAddrLen: socklen_t = socklen_t(sizeof(sockaddr))
+        var localSockAddrLen: socklen_t = socklen_t(MemoryLayout<sockaddr>.size)
         if getsockname(socket, &localSockAddr, &localSockAddrLen) == 0 {
             localAddress = SocketAddress(sockaddrPtr: &localSockAddr)
         } else {
             //TODO: Handle the error.
-            localAddress = SocketAddress.SysError(errno: errno)
+            localAddress = SocketAddress.sysError(errno: errno)
         }
         //
         var nosigpipe: Int32 = 1
-        if setsockopt(socket, SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe, socklen_t(sizeof(Int32))) != 0 {
+        if setsockopt(socket, SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe, socklen_t(MemoryLayout<Int32>.size)) != 0 {
             //TODO: Handle the error.
             SysErrorLog(errno)
         }

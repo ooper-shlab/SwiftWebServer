@@ -8,12 +8,11 @@
 
 import Foundation
 
-extension NSData {
-    func hasSuffix(bytes: UInt8...) -> Bool {
-        if self.length < bytes.count { return false }
-        let ptr = UnsafePointer<UInt8>(self.bytes)
-        for (i, byte) in bytes.enumerate() {
-            if ptr[self.length - bytes.count + i] != byte {
+extension Data {
+    func hasSuffix(_ bytes: UInt8...) -> Bool {
+        if self.count < bytes.count { return false }
+        for (i, byte) in bytes.enumerated() {
+            if self[self.count - bytes.count + i] != byte {
                 return false
             }
         }

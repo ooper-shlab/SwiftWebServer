@@ -7,7 +7,7 @@
 //
 
 import Foundation
-func SysErrorLog(err: errno_t, file: String = __FILE__, line: Int = __LINE__) {
-    let errStr = String.fromCString(strerror(errno))
-    NSLog("%@(%d) in %@:%d", errStr!, errno, file, line)
+func SysErrorLog(_ err: errno_t, file: String = #file, line: Int = #line) {
+    let errStr = String(cString: strerror(errno))
+    NSLog("%@(%d) in %@:%d", errStr, errno, file, line)
 }

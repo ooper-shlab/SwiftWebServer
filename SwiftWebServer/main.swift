@@ -27,13 +27,13 @@ autoreleasepool {
     listener6!.connectionHandler = connectionHandler.handleConnection
     
     let listen_queue = TCPListener.queue
-    dispatch_async(listen_queue) {
+    listen_queue.async {
         NSLog("listen_queue works!")
     }
-    dispatch_async(dispatch_get_main_queue()) {
+    DispatchQueue.main.async {
         NSLog("running main queue!")
     }
     //Run the main queue!
-    dispatch_main()
+    dispatchMain()
     
 }

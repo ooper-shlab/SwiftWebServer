@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Int32: UnicodeScalarLiteralConvertible {
+extension Int32: ExpressibleByUnicodeScalarLiteral {
     public init(unicodeScalarLiteral value: UnicodeScalar) {
         self = Int32(UInt32(value))
     }
@@ -41,10 +41,9 @@ class Options {
     private(set) var port: UInt16 = 8080
     private(set) var backlogs: Int32 = 16
     private(set) var staticBase: String = "/Library/WebServer/Documents"
-    var staticBaseURL: NSURL {
-        let url = NSURL(string: staticBase)
-        assert(url != nil)
-        return url!
+    var staticBaseURL: URL {
+        let url = URL(fileURLWithPath: staticBase)
+        return url
     }
     private(set) var types: [String: String] = [
         "html": "text/html",
@@ -83,26 +82,25 @@ class Options {
         if let staticBase = getopt.option("b") {
             self.staticBase = staticBase
         }
-        if let portStr = getopt.option("p"), port = Int(portStr)
-            where port >= 0 && port < Int(UInt16.max) {
+        if let portStr = getopt.option("p"), let port = Int(portStr), port >= 0 && port < Int(UInt16.max) {
                 self.port = UInt16(port)
         }
         if let types = getopt.option("types") {
-            self.types = types.componentsSeparatedByString(",").reduce([:]) {dict, pair in
+            self.types = types.components(separatedBy: ",").reduce([:]) {dict, pair in
                 var result = dict
-                if let sep = pair.rangeOfString(":", options: []) {
-                    let key = pair.substringToIndex(sep.startIndex)
-                        .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-                    let value = pair.substringFromIndex(sep.endIndex)
-                        .stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+                if let sep = pair.range(of: ":", options: []) {
+                    let key = pair.substring(to: sep.lowerBound)
+                        .trimmingCharacters(in: CharacterSet.whitespaces)
+                    let value = pair.substring(from: sep.upperBound)
+                        .trimmingCharacters(in: CharacterSet.whitespaces)
                     result[key] = value
                 }
                 return result
             }
         }
         if let defaults = getopt.option("d") {
-            self.defaults = defaults.componentsSeparatedByString(",").map{
-                $0.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+            self.defaults = defaults.components(separatedBy: ",").map{
+                $0.trimmingCharacters(in: CharacterSet.whitespaces)
             }
         }
     }

@@ -13,7 +13,7 @@ class HTTPResponse {
     
     var headers: HTTPValues = HTTPValues()
     
-    var status: HTTPStatus = .OK
+    var status: HTTPStatus = .ok
     var version: String = "HTTP/1.1"
     
     var contentType: String? {
