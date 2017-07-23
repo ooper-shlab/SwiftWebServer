@@ -1,7 +1,7 @@
 SwiftWebServer: An experimental Web server written in Swift, runs on OS X.
-Version:  1.0
+Version:  1.0 (s4r1)
 
-Copyright (c) 2014-2015, OOPer(NAGATA, Atsuyuki)
+Copyright (c) 2014-2017, OOPer(NAGATA, Atsuyuki)
 All rights reserved.
 
 Use of any parts(functions, classes or any other program language components)

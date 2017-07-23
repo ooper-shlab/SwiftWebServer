@@ -3,7 +3,8 @@
 //  OOPUtils
 //
 //  Created by OOPer in cooperation with shlab.jp, on 2015/5/5.
-//  Copyright (c) 2015 OOPer (NAGATA, Atsuyuki). All rights reserved.
+//  Last update adapted to Swift 4 on 2017/7/23.
+//  Copyright (c) 2015-2017 OOPer (NAGATA, Atsuyuki). All rights reserved.
 //
 
 import Foundation
@@ -370,7 +371,7 @@ extension JSON {
     static func unescape(_ val: String) -> String {
         var val = val
         if val.hasPrefix("\"") && val.hasSuffix("\"") && val.characters.count >= 2 {
-            val = val[val.characters.index(after: val.startIndex)..<val.characters.index(before: val.endIndex)]
+            val = String(val[val.characters.index(after: val.startIndex)..<val.characters.index(before: val.endIndex)])
         }
         //strict JSON
         let result = unescapeRegex.stringByReplacingMatchesInString(val)
@@ -452,7 +453,7 @@ extension JSON {
         let firstTokenRegex = options["firstTokenRegex"] as! NSRegularExpression
         var range = NSRange(0..<string.utf16.count)
         if let firstMatch = firstTokenRegex.firstMatch(in: string, options: [], range: range) {
-            let firstToken = (string as NSString).substring(with: firstMatch.rangeAt(1))
+            let firstToken = (string as NSString).substring(with: firstMatch.range(at: 1))
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
             return parseValue(firstToken, string, &range, options, onError)
@@ -567,10 +568,10 @@ extension JSON {
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
             assert(firstMatch.numberOfRanges == 3)
-            if firstMatch.rangeAt(1).location != NSNotFound {
+            if firstMatch.range(at: 1).location != NSNotFound {
                 return array(values)
             }
-            let firstToken = (string as NSString).substring(with: firstMatch.rangeAt(2))
+            let firstToken = (string as NSString).substring(with: firstMatch.range(at: 2))
             if let value = parseValue(firstToken, string, &range, options, onError) {
                 values.append(value)
             } else {
@@ -582,10 +583,10 @@ extension JSON {
             range.location += nextMatch.range.length
             range.length -= nextMatch.range.length
             assert(nextMatch.numberOfRanges == 3)
-            if nextMatch.rangeAt(1).location != NSNotFound {
+            if nextMatch.range(at: 1).location != NSNotFound {
                 return array(values)
             }
-            let nextToken = (string as NSString).substring(with: nextMatch.rangeAt(2))
+            let nextToken = (string as NSString).substring(with: nextMatch.range(at: 2))
             if let value = parseValue(nextToken, string, &range, options, onError) {
                 values.append(value)
             } else {
@@ -605,11 +606,11 @@ extension JSON {
             range.location += firstMatch.range.length
             range.length -= firstMatch.range.length
             assert(firstMatch.numberOfRanges == 4)
-            if firstMatch.rangeAt(1).location != NSNotFound {
+            if firstMatch.range(at: 1).location != NSNotFound {
                 return object(dict)
             }
-            let key = unescape((string as NSString).substring(with: firstMatch.rangeAt(2)))
-            let firstToken = (string as NSString).substring(with: firstMatch.rangeAt(3))
+            let key = unescape((string as NSString).substring(with: firstMatch.range(at: 2)))
+            let firstToken = (string as NSString).substring(with: firstMatch.range(at: 3))
             if let value = parseValue(firstToken, string, &range, options, onError) {
                 dict[key] = value
             } else {
@@ -621,11 +622,11 @@ extension JSON {
             range.location += nextMatch.range.length
             range.length -= nextMatch.range.length
             assert(nextMatch.numberOfRanges == 4)
-            if nextMatch.rangeAt(1).location != NSNotFound {
+            if nextMatch.range(at: 1).location != NSNotFound {
                 return object(dict)
             }
-            let key = unescape((string as NSString).substring(with: nextMatch.rangeAt(2)))
-            let nextToken = (string as NSString).substring(with: nextMatch.rangeAt(3))
+            let key = unescape((string as NSString).substring(with: nextMatch.range(at: 2)))
+            let nextToken = (string as NSString).substring(with: nextMatch.range(at: 3))
             if let value = parseValue(nextToken, string, &range, options, onError) {
                 if dict[key] != nil && !duplicateKey {
                     //error
@@ -641,7 +642,7 @@ extension JSON {
     }
     
     static func JSONParseError(_ message: String, _ string: String, _ range: NSRange) -> NSError {
-        let userInfo: [AnyHashable: Any] = [
+        let userInfo: [String: Any] = [
             "message": message
         ]
         return NSError(domain: "JSON.parse", code: 0, userInfo: userInfo)

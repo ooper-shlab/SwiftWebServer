@@ -167,7 +167,8 @@ class SwiftWebServerTest: XCTestCase {
         self.measure() {
             let jsonString = "{ \"a\": 10.5, \"b\": [true, false, null], \"c\": \"\\r\\n\"}"
             var hasError = false
-            let json = JSON.parse(jsonString) {_ in hasError = true}
+            _ = JSON.parse(jsonString) {_ in hasError = true}
+            assert(!hasError)
         }
     }
     
@@ -176,7 +177,8 @@ class SwiftWebServerTest: XCTestCase {
         self.measure() {
             let jsonString = "{ \"a\": 10.5, \"b\": [true, false, null], \"c\": \"\\r\\n\"}"
             var hasError = false
-            let json = JSON.parse(jsonString, options: self.options) {_ in hasError = true}
+            _ = JSON.parse(jsonString, options: self.options) {_ in hasError = true}
+            assert(!hasError)
         }
     }
     
